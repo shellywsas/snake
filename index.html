@@ -8,7 +8,7 @@
     
     <style>
         /* ==========================================
-           עיצוב בסיסי והתאמה למסך ללא גלילה
+           עיצוב בסיסי (Reset & Base)
            ========================================== */
         :root {
             --primary-color: #ff4757;
@@ -20,7 +20,7 @@
         html, body {
             margin: 0; padding: 0;
             width: 100vw; height: 100vh;
-            overflow: hidden; /* ביטול גלילה מוחלט */
+            overflow: hidden; 
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: var(--bg-color);
             background-image: radial-gradient(#dfe4ea 2px, transparent 2px);
@@ -30,12 +30,9 @@
         }
 
         h1 { 
-            color: #ff6b81; 
-            font-size: clamp(1.5rem, 4vh, 2.5rem);
-            margin: 1vh 0; 
-            text-shadow: 2px 2px 0px #fff, 4px 4px 0px rgba(0,0,0,0.1); 
-            font-weight: 900;
-            flex-shrink: 0;
+            color: #ff6b81; font-size: clamp(1.2rem, 3.5vh, 2rem);
+            margin: 1vh 0; text-shadow: 2px 2px 0px #fff, 4px 4px 0px rgba(0,0,0,0.1); 
+            font-weight: 900; flex-shrink: 0;
         }
 
         /* ==========================================
@@ -44,54 +41,63 @@
         #setup-screen {
             background: white; padding: 2vh 2vw; border-radius: 20px;
             box-shadow: 0 10px 25px rgba(0,0,0,0.1); text-align: center;
-            width: 90%; max-width: 450px; border: 4px dashed #ff4757;
-            margin: auto;
+            width: 90%; max-width: 500px; border: 4px dashed #ff4757;
+            margin: auto; overflow-y: auto; max-height: 85vh;
         }
 
-        .setup-group { margin-bottom: 2vh; border-bottom: 2px solid #eee; padding-bottom: 1vh; font-weight: bold; font-size: 1.2rem;}
+        .setup-group { margin-bottom: 2vh; border-bottom: 2px solid #eee; padding-bottom: 1vh; font-weight: bold; font-size: 1.1rem; display: flex; justify-content: center; gap: 10px; align-items: center;}
+        .setup-group select { font-size: 1rem; padding: 5px; border-radius: 8px; font-weight: bold; border: 2px solid #ccc; outline: none; }
+        
         .player-setup-row {
-            display: flex; align-items: center; justify-content: space-between;
-            margin-bottom: 1.5vh; background: #f8f9fa; padding: 1.5vh;
+            display: flex; align-items: center; justify-content: space-between; gap: 5px;
+            margin-bottom: 1vh; background: #f8f9fa; padding: 1vh;
             border-radius: 12px; border: 2px solid #eccc68;
         }
         .player-setup-row input[type="text"] {
             padding: 8px; border: 2px solid #dfe4ea; border-radius: 8px;
-            width: 40%; font-size: 1rem; font-weight: bold;
+            width: 35%; font-size: 0.9rem; font-weight: bold; text-align: center;
         }
-        .color-picker { width: 40px; height: 40px; border: 2px solid #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.2); cursor: pointer; border-radius: 50%; }
+        .avatar-select { font-size: 1.2rem; padding: 5px; border-radius: 8px; border: 2px solid #dfe4ea; background: white; cursor: pointer; }
+        .color-picker { width: 35px; height: 35px; border: 2px solid #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.2); cursor: pointer; border-radius: 50%; }
 
         /* ==========================================
            מסך המשחק והלוח
            ========================================== */
-        #game-screen { display: none; width: 100%; height: 100%; flex-direction: column; align-items: center; padding: 1vh 1vw; box-sizing: border-box;}
+        #game-screen { display: none; width: 100%; height: 100%; flex-direction: column; align-items: center; padding: 0.5vh 1vw; box-sizing: border-box;}
+
+        /* סרגל ניווט עליון חדש! */
+        #top-controls {
+            display: flex; gap: 10px; margin-bottom: 1vh; justify-content: center; flex-wrap: wrap;
+        }
+        .control-btn {
+            background: white; border: 2px solid #70a1ff; color: #3742fa;
+            border-radius: 8px; padding: 5px 12px; font-weight: bold; font-size: 0.9rem;
+            cursor: pointer; transition: all 0.2s; box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .control-btn:hover { background: #70a1ff; color: white; transform: translateY(-2px); }
 
         #status-bar {
-            background: white; padding: 1vh 3vw; border-radius: 15px;
+            background: white; padding: 1vh 2vw; border-radius: 15px;
             box-shadow: 0 4px 10px rgba(0,0,0,0.1); margin-bottom: 1vh;
-            font-size: clamp(1rem, 2.5vh, 1.5rem); font-weight: bold; border: 3px solid #70a1ff;
-            text-align: center; flex-shrink: 0;
+            font-size: clamp(0.9rem, 2vh, 1.2rem); font-weight: bold; border: 3px solid #70a1ff;
+            text-align: center; flex-shrink: 0; width: 95%; max-width: 600px;
+            display: flex; justify-content: space-between; align-items: center;
         }
+        .player-stats { display: flex; gap: 15px; font-size: 0.9rem; color: #57606f; }
         #current-player-indicator {
             display: inline-block; width: 2vh; height: 2vh; border-radius: 50%;
-            margin-left: 8px; border: 2px solid #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.3);
-            vertical-align: middle;
+            margin-left: 5px; border: 2px solid #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.3); vertical-align: middle;
         }
         
         #board-wrapper {
             position: relative; background: #ffffff; border-radius: 15px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.15); border: 4px solid #ff7f50;
             padding: 4px; margin-bottom: 1vh;
-            /* חישוב גודל מקסימלי כדי שיהיה ריבוע שתמיד נכנס למסך */
-            width: 100%; max-width: min(90vw, 65vh);
-            height: 100%; max-height: min(90vw, 65vh);
+            width: 100%; max-width: min(90vw, 62vh); height: 100%; max-height: min(90vw, 62vh);
             aspect-ratio: 1; flex-shrink: 1;
         }
 
-        #board {
-            display: grid; grid-template-columns: repeat(10, 1fr); gap: 2px;
-            width: 100%; height: 100%; position: relative;
-        }
-
+        #board { display: grid; grid-template-columns: repeat(10, 1fr); gap: 2px; width: 100%; height: 100%; position: relative; }
         #connections { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 2; }
 
         .cell {
@@ -107,45 +113,48 @@
         .cell:nth-child(4n+4) { background-color: #ffa502; background-image: radial-gradient(circle at 0 0, rgba(255,255,255,0.2) 20%, transparent 21%); background-size: 15px 15px;}
         .cell:nth-child(1), .cell:nth-child(100) { background: #eccc68 !important; color: #2f3542; border: 2px solid #ff4757;}
 
+        .surprise-cell::before {
+            content: '❓'; position: absolute; font-size: clamp(15px, 2.5vh, 25px);
+            top: 50%; left: 50%; transform: translate(-50%, -50%);
+            opacity: 0.5; text-shadow: none;
+        }
+
         .tokens-container {
-            position: absolute; bottom: 2px; left: 2px; width: calc(100% - 4px); height: 70%;
+            position: absolute; bottom: 2px; left: 2px; width: calc(100% - 4px); height: 75%;
             display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: flex-start; z-index: 5;
         }
 
         .player-token {
             width: 35%; height: 35%; border-radius: 50%; border: 2px solid white;
             box-shadow: 0 2px 4px rgba(0,0,0,0.4); margin: 1px; transition: transform 0.2s;
+            display: flex; justify-content: center; align-items: center; font-size: clamp(10px, 1.8vh, 18px);
         }
 
         .player-token.active {
             border: 2px solid #fff; box-shadow: 0 0 10px 3px rgba(255,255,255,0.8);
-            transform: scale(1.4); animation: bounce 0.5s infinite alternate; z-index: 10;
+            transform: scale(1.5); animation: bounce 0.5s infinite alternate; z-index: 10;
         }
-        @keyframes bounce { from { transform: translateY(0) scale(1.4); } to { transform: translateY(-5px) scale(1.4); } }
+        @keyframes bounce { from { transform: translateY(0) scale(1.5); } to { transform: translateY(-5px) scale(1.5); } }
 
         .btn {
-            padding: 1.5vh 4vw; font-size: clamp(1rem, 3vh, 1.5rem); font-weight: 900; cursor: pointer;
+            padding: 1vh 3vw; font-size: clamp(1rem, 2.5vh, 1.3rem); font-weight: 900; cursor: pointer;
             background: linear-gradient(135deg, #ff4757, #ff6b81); color: white;
-            border: none; border-radius: 50px; flex-shrink: 0; margin-top: 1vh;
+            border: none; border-radius: 50px; flex-shrink: 0; margin-top: 0.5vh;
             box-shadow: 0 6px 15px rgba(255, 71, 87, 0.4); transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
-        .btn:hover { transform: translateY(-2px) scale(1.05); box-shadow: 0 8px 20px rgba(255, 71, 87, 0.5); }
-        .btn:active { transform: translateY(1px) scale(0.95); }
-        .btn:disabled { background: #ced4da; box-shadow: none; cursor: not-allowed; transform: none; }
+        .btn:hover:not(:disabled) { transform: translateY(-2px) scale(1.05); box-shadow: 0 8px 20px rgba(255, 71, 87, 0.5); }
+        .btn:active:not(:disabled) { transform: translateY(1px) scale(0.95); }
+        .btn:disabled { background: #ced4da; box-shadow: none; cursor: not-allowed; }
 
         /* ==========================================
-           מסך קוביה ואנימציה
+           מסך קוביה
            ========================================== */
         #big-dice-overlay {
             display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(255,255,255,0.95); z-index: 50; border-radius: 10px;
-            flex-direction: column; justify-content: center; align-items: center;
-            backdrop-filter: blur(2px);
+            flex-direction: column; justify-content: center; align-items: center; backdrop-filter: blur(2px);
         }
-        #big-dice-number { 
-            font-size: min(150px, 30vh); font-weight: 900; color: #ff4757; 
-            text-shadow: 4px 4px 0px #ffeaa7; 
-        }
+        #big-dice-number { font-size: min(150px, 25vh); font-weight: 900; color: #ff4757; text-shadow: 4px 4px 0px #ffeaa7; }
         .rolling-anim { animation: shake 0.1s infinite; }
         @keyframes shake { 0% { transform: translate(1px, 1px) rotate(0deg); } 50% { transform: translate(-1px, -2px) rotate(-5deg); } 100% { transform: translate(-3px, 0px) rotate(5deg); } }
         #big-dice-text { font-size: clamp(1.2rem, 3vh, 2rem); font-weight: bold; color: #2f3542; margin-top: 2vh; text-align: center; padding: 0 10px;}
@@ -155,26 +164,45 @@
            ========================================== */
         .modal {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.7); z-index: 100; justify-content: center; align-items: center;
-            backdrop-filter: blur(5px);
+            background: rgba(0,0,0,0.7); z-index: 100; justify-content: center; align-items: center; backdrop-filter: blur(5px);
         }
         .modal-content {
-            background: white; padding: 3vh 3vw; border-radius: 25px;
+            background: white; padding: 2.5vh 3vw; border-radius: 25px; position: relative;
             box-shadow: 0 20px 50px rgba(0,0,0,0.3); text-align: center;
-            width: 90%; max-width: 400px; animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            border: 5px solid #1dd1a1;
+            width: 90%; max-width: 420px; animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 5px solid #1dd1a1; max-height: 95vh; overflow-y: auto;
         }
         @keyframes popIn { from {transform: scale(0.5); opacity:0;} to {transform: scale(1); opacity:1;} }
         
-        .modal h2 { margin-top: 0; font-size: clamp(1.5rem, 3.5vh, 2rem); font-weight: 900;}
-        .dice-visuals { font-size: clamp(1.2rem, 3vh, 1.8rem); margin: 2vh 0; background: #f1f2f6; padding: 1.5vh; border-radius: 15px; font-weight:bold;}
-        .math-question { font-size: clamp(2rem, 4vh, 3rem); font-weight: 900; color: var(--primary-color); margin: 2vh 0; direction: ltr;}
+        .modal h2 { margin: 0 0 1vh 0; font-size: clamp(1.5rem, 3vh, 2rem); font-weight: 900;}
+        
+        /* רשימת שחקנים בחלון פרישה */
+        .remove-player-list { display: flex; flex-direction: column; gap: 10px; margin: 2vh 0; text-align: right;}
+        .remove-player-item { display: flex; justify-content: space-between; align-items: center; padding: 10px; background: #f1f2f6; border-radius: 10px;}
+        .remove-btn { background: #ff4757; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; font-weight: bold;}
+        .remove-btn:hover { background: #c0392b; }
+
+        .dice-visuals { font-size: clamp(1.2rem, 3vh, 1.6rem); margin: 1vh 0; background: #f1f2f6; padding: 1vh; border-radius: 15px; font-weight:bold;}
+        .math-question { font-size: clamp(2rem, 4vh, 3rem); font-weight: 900; color: var(--primary-color); margin: 1.5vh 0; direction: ltr;}
         .answer-input {
-            padding: 1.5vh; font-size: clamp(1.5rem, 3vh, 2rem); width: 150px; font-weight:bold;
-            text-align: center; border: 4px solid #dfe4ea; border-radius: 15px; margin-bottom: 2vh;
+            padding: 1vh; font-size: clamp(1.5rem, 3vh, 2rem); width: 120px; font-weight:bold;
+            text-align: center; border: 4px solid #dfe4ea; border-radius: 15px; margin-bottom: 1.5vh;
             outline: none; transition: all 0.3s;
         }
         .answer-input:focus { border-color: var(--secondary-color); box-shadow: 0 0 15px rgba(29, 209, 161, 0.5); }
+        
+        /* טיימר וכוחות */
+        #timer-container { width: 100%; height: 15px; background: #eee; border-radius: 10px; overflow: hidden; margin-bottom: 1.5vh; box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);}
+        #timer-bar { width: 100%; height: 100%; background: #2ed573; transition: width 1s linear, background-color 0.5s; }
+        
+        .powerups-panel { display: flex; justify-content: center; gap: 10px; margin-bottom: 1.5vh; border-top: 2px dashed #eee; padding-top: 1.5vh;}
+        .powerup-btn { 
+            background: #f8f9fa; border: 2px solid #eccc68; padding: 8px 12px; border-radius: 12px;
+            font-weight: bold; cursor: pointer; display: flex; flex-direction: column; align-items: center; font-size: 0.85rem;
+        }
+        .powerup-btn:hover:not(:disabled) { background: #fff3cd; transform: translateY(-2px); }
+        .powerup-btn:disabled { opacity: 0.5; cursor: not-allowed; border-color: #ccc; }
+        #hint-display { color: #e15f41; font-weight: bold; font-size: 1.1rem; min-height: 25px;}
 
         /* קונפטי */
         .confetti { position: absolute; width: 10px; height: 10px; z-index: 999; animation: fall linear forwards; }
@@ -188,23 +216,39 @@
     <div id="setup-screen">
         <h2>הכנות למשחק</h2>
         <div class="setup-group">
-            <label>כמה שחקנים/ות? </label>
-            <select id="player-count" onchange="renderPlayerSetup()" style="font-size:16px; padding:8px; border-radius:8px; font-weight:bold;">
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
+            <label>כמה שחקנים/ות?</label>
+            <select id="player-count" onchange="renderPlayerSetup()">
+                <option value="2">2</option><option value="3">3</option><option value="4">4</option>
+            </select>
+        </div>
+        <div class="setup-group" style="margin-bottom: 3vh;">
+            <label>רמת קושי:</label>
+            <select id="game-difficulty">
+                <option value="easy">קל (עד 6x6)</option>
+                <option value="medium" selected>בינוני (עד 10x10, שיטת ה-4)</option>
+                <option value="hard">קשה (אקראי עד 10x10 + עונשים)</option>
             </select>
         </div>
         <div id="player-config-list"></div>
-        <button class="btn" onclick="startGame()">בואו נתחיל! 🚀</button>
+        <button class="btn" onclick="startGame()" style="margin-top:2vh;">בואו נתחיל! 🚀</button>
     </div>
 
     <div id="game-screen">
+        <div id="top-controls">
+            <button class="control-btn" onclick="goToMenu()">🏠 לתפריט</button>
+            <button class="control-btn" onclick="restartGame()">🔄 התחל מחדש</button>
+            <button class="control-btn" onclick="openRemovePlayerModal()">🚪 פרישת שחקן</button>
+        </div>
+
         <div id="status-bar">
-            <span>תור: </span>
-            <span id="current-player-indicator"></span>
-            <span id="current-player-name"></span>
-            <div id="game-message" style="font-weight:normal; font-size:clamp(0.9rem, 2vh, 1.1rem); margin-top:0.5vh; color:#57606f;">יש לגלגל את הקוביה!</div>
+            <div>
+                <span>תור:</span> <span id="current-player-indicator"></span> <span id="current-player-name"></span>
+                <div id="game-message" style="font-weight:normal; font-size:0.9rem; color:#57606f;">יש לגלגל קוביה!</div>
+            </div>
+            <div class="player-stats">
+                <div title="מטבעות">🪙 <span id="ui-coins">3</span></div>
+                <div title="מגן חסינות" id="ui-immune" style="display:none;">🛡️ מוגן</div>
+            </div>
         </div>
         
         <div id="board-wrapper">
@@ -220,15 +264,44 @@
         <button id="rollBtn" class="btn" onclick="takeTurn()">גלגל/י קוביה 🎲</button>
     </div>
 
+    <div id="remove-player-modal" class="modal">
+        <div class="modal-content" style="border-color:#e74c3c;">
+            <h2 style="color:#e74c3c;">פרישת שחקנים</h2>
+            <p>מישהו רוצה לפרוש מהמשחק?</p>
+            <div id="remove-player-list" class="remove-player-list"></div>
+            <button class="btn" onclick="closeRemoveModal()" style="background:#7f8c8d; padding: 5px 15px; font-size:1rem;">סגור חלון</button>
+        </div>
+    </div>
+
     <div id="challenge-modal" class="modal">
         <div class="modal-content" id="modal-content-box">
             <h2 id="challenge-title">אתגר!</h2>
-            <div id="challenge-desc" style="font-size:1.2rem; font-weight:bold;"></div>
+            <div id="timer-container"><div id="timer-bar"></div></div>
+            
+            <div id="challenge-desc" style="font-size:1.1rem; font-weight:bold;"></div>
             <div class="dice-visuals" id="dice-visuals"></div>
             <div class="math-question" id="math-question"></div>
             <input type="number" id="answer-input" class="answer-input" placeholder="?">
-            <br>
-            <button class="btn" onclick="checkAnswer()">בדיקת תשובה</button>
+            <div id="hint-display"></div>
+            
+            <div class="powerups-panel">
+                <button class="powerup-btn" id="btn-hint" onclick="buyHint()">
+                    <span>💡 רמז</span><span>(1 🪙)</span>
+                </button>
+                <button class="powerup-btn" id="btn-swap" onclick="buySwap()">
+                    <span>🔄 החלף שאלה</span><span>(2 🪙)</span>
+                </button>
+            </div>
+
+            <button class="btn" onclick="checkAnswer(false)">בדיקת תשובה</button>
+        </div>
+    </div>
+
+    <div id="surprise-modal" class="modal">
+        <div class="modal-content" style="border-color:#9b59b6;">
+            <h2 style="color:#9b59b6; font-size: 2rem;">❓ הפתעה! ❓</h2>
+            <p id="surprise-message" style="font-size:1.3rem; font-weight:bold; margin: 2vh 0;"></p>
+            <button class="btn" onclick="closeSurprise()" style="background:#9b59b6;">המשך משחק</button>
         </div>
     </div>
 
@@ -236,13 +309,13 @@
         <div class="modal-content" style="border-color:#f1c40f;">
             <h2 style="color:#f1c40f; font-size: clamp(2rem, 5vh, 3rem);">🏆 ניצחון! 🏆</h2>
             <p id="winner-message" style="font-size:clamp(1.2rem, 3vh, 1.8rem); font-weight:900; color:#2f3542;"></p>
-            <button class="btn" onclick="location.reload()" style="background:#f1c40f; color:#333;">משחק חדש</button>
+            <button class="btn" onclick="goToMenu()" style="background:#f1c40f; color:#333;">תפריט ראשי</button>
         </div>
     </div>
 
     <script>
         // ==========================================
-        // מערכת סאונד פנימית מלאה
+        // מערכת סאונד
         // ==========================================
         const AudioContext = window.AudioContext || window.webkitAudioContext;
         let audioCtx;
@@ -254,42 +327,32 @@
             osc.connect(gainNode); gainNode.connect(audioCtx.destination);
             const now = audioCtx.currentTime;
             
-            if (type === 'step') {
-                osc.type = 'sine'; osc.frequency.setValueAtTime(400, now); osc.frequency.exponentialRampToValueAtTime(600, now + 0.1);
-                gainNode.gain.setValueAtTime(0.2, now); gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
-                osc.start(now); osc.stop(now + 0.1);
-            } else if (type === 'tick') {
-                osc.type = 'square'; osc.frequency.setValueAtTime(800, now);
-                gainNode.gain.setValueAtTime(0.1, now); gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.05);
-                osc.start(now); osc.stop(now + 0.05);
-            } else if (type === 'correct') {
-                osc.type = 'triangle'; osc.frequency.setValueAtTime(523.25, now); osc.frequency.setValueAtTime(659.25, now + 0.1); osc.frequency.setValueAtTime(783.99, now + 0.2);
-                gainNode.gain.setValueAtTime(0.2, now); gainNode.gain.linearRampToValueAtTime(0, now + 0.5);
-                osc.start(now); osc.stop(now + 0.5);
-            } else if (type === 'wrong') {
-                osc.type = 'sawtooth'; osc.frequency.setValueAtTime(300, now); osc.frequency.linearRampToValueAtTime(150, now + 0.4);
-                gainNode.gain.setValueAtTime(0.2, now); gainNode.gain.linearRampToValueAtTime(0, now + 0.4);
-                osc.start(now); osc.stop(now + 0.4);
-            } else if (type === 'win') {
-                osc.type = 'square'; osc.frequency.setValueAtTime(440, now); osc.frequency.setValueAtTime(554.37, now + 0.15); osc.frequency.setValueAtTime(659.25, now + 0.3); osc.frequency.setValueAtTime(880, now + 0.45);
-                gainNode.gain.setValueAtTime(0.2, now); gainNode.gain.linearRampToValueAtTime(0, now + 1.0);
-                osc.start(now); osc.stop(now + 1.0);
-            }
+            if (type === 'step') { osc.type = 'sine'; osc.frequency.setValueAtTime(400, now); osc.frequency.exponentialRampToValueAtTime(600, now + 0.1); gainNode.gain.setValueAtTime(0.2, now); gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.1); osc.start(now); osc.stop(now + 0.1); } 
+            else if (type === 'tick') { osc.type = 'square'; osc.frequency.setValueAtTime(800, now); gainNode.gain.setValueAtTime(0.1, now); gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.05); osc.start(now); osc.stop(now + 0.05); } 
+            else if (type === 'timer') { osc.type = 'square'; osc.frequency.setValueAtTime(900, now); gainNode.gain.setValueAtTime(0.05, now); gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.1); osc.start(now); osc.stop(now + 0.1); } 
+            else if (type === 'correct') { osc.type = 'triangle'; osc.frequency.setValueAtTime(523.25, now); osc.frequency.setValueAtTime(659.25, now + 0.1); osc.frequency.setValueAtTime(783.99, now + 0.2); gainNode.gain.setValueAtTime(0.2, now); gainNode.gain.linearRampToValueAtTime(0, now + 0.5); osc.start(now); osc.stop(now + 0.5); } 
+            else if (type === 'wrong') { osc.type = 'sawtooth'; osc.frequency.setValueAtTime(300, now); osc.frequency.linearRampToValueAtTime(150, now + 0.4); gainNode.gain.setValueAtTime(0.2, now); gainNode.gain.linearRampToValueAtTime(0, now + 0.4); osc.start(now); osc.stop(now + 0.4); } 
+            else if (type === 'magic') { osc.type = 'sine'; osc.frequency.setValueAtTime(600, now); osc.frequency.exponentialRampToValueAtTime(1200, now + 0.5); gainNode.gain.setValueAtTime(0.2, now); gainNode.gain.linearRampToValueAtTime(0, now + 0.5); osc.start(now); osc.stop(now + 0.5); }
+            else if (type === 'slideUp') { osc.type = 'sine'; osc.frequency.setValueAtTime(300, now); osc.frequency.exponentialRampToValueAtTime(900, now + 1.5); gainNode.gain.setValueAtTime(0.2, now); gainNode.gain.linearRampToValueAtTime(0, now + 1.5); osc.start(now); osc.stop(now + 1.5); }
+            else if (type === 'slideDown') { osc.type = 'sine'; osc.frequency.setValueAtTime(900, now); osc.frequency.exponentialRampToValueAtTime(200, now + 1.5); gainNode.gain.setValueAtTime(0.2, now); gainNode.gain.linearRampToValueAtTime(0, now + 1.5); osc.start(now); osc.stop(now + 1.5); }
+            else if (type === 'win') { osc.type = 'square'; osc.frequency.setValueAtTime(440, now); osc.frequency.setValueAtTime(554.37, now + 0.15); osc.frequency.setValueAtTime(659.25, now + 0.3); osc.frequency.setValueAtTime(880, now + 0.45); gainNode.gain.setValueAtTime(0.2, now); gainNode.gain.linearRampToValueAtTime(0, now + 1.0); osc.start(now); osc.stop(now + 1.0); }
         }
 
         // ==========================================
-        // הגדרות המשחק הראשיות
+        // הגדרות המשחק הכלליות
         // ==========================================
         const ladders = { 4: 14, 9: 31, 20: 38, 28: 84, 40: 59, 51: 67, 63: 81, 71: 91 };
         const snakes = { 17: 7, 54: 34, 62: 19, 64: 60, 87: 24, 93: 73, 95: 75, 99: 78 };
+        const surpriseSquares = [12, 25, 45, 68, 88];
+        const avatars = ['🐈','🦖','🦄','🤖','🐙','🦊','🐰','🐸'];
         const defaultColors = ['#ff4757', '#1e90ff', '#2ed573', '#ffa502'];
-        // הכנת שמות חמודים מראש כברירת מחדל!
         const defaultNames = ['פיצפץ', 'דפנה', 'שחקן/ית 3', 'שחקן/ית 4'];
         
-        let players = [];
-        let turnIndex = 0;
-        let isMoving = false;
+        let players = [], turnIndex = 0, isMoving = false;
+        let difficulty = 'medium';
         let currentChallengeData = null;
+        let timerInterval = null;
+        let timeLeft = 20;
 
         renderPlayerSetup();
 
@@ -298,59 +361,122 @@
             const container = document.getElementById('player-config-list');
             container.innerHTML = '';
             for (let i = 0; i < count; i++) {
+                let avatarOptions = avatars.map(a => `<option value="${a}">${a}</option>`).join('');
                 container.innerHTML += `
                     <div class="player-setup-row">
-                        <span>שחקן/ית ${i+1}:</span>
+                        <select id="p${i}-avatar" class="avatar-select">${avatarOptions}</select>
                         <input type="text" id="p${i}-name" value="${defaultNames[i]}" maxlength="12">
                         <input type="color" id="p${i}-color" class="color-picker" value="${defaultColors[i]}">
                     </div>`;
+                setTimeout(() => { document.getElementById(`p${i}-avatar`).selectedIndex = i % avatars.length; }, 10);
             }
         }
 
+        // ==========================================
+        // ניווט ושליטה (תפריט, מחדש, פרישה)
+        // ==========================================
         function startGame() {
             initAudio();
+            difficulty = document.getElementById('game-difficulty').value;
             const count = parseInt(document.getElementById('player-count').value);
             players = [];
             for (let i = 0; i < count; i++) {
                 players.push({
-                    id: i, 
+                    id: 'p_' + Date.now() + '_' + i, 
                     name: document.getElementById(`p${i}-name`).value || `שחקן/ית ${i+1}`,
+                    avatar: document.getElementById(`p${i}-avatar`).value,
                     color: document.getElementById(`p${i}-color`).value, 
-                    pos: 1
+                    pos: 1, coins: 3, immune: false
                 });
             }
             document.getElementById('setup-screen').style.display = 'none';
             document.getElementById('game-screen').style.display = 'flex';
+            turnIndex = 0; isMoving = false; document.getElementById('rollBtn').disabled = false;
             createBoard();
             updateTurnIndicator();
         }
 
+        function goToMenu() {
+            // ניקוי המצב
+            document.getElementById('game-screen').style.display = 'none';
+            document.getElementById('game-over-modal').style.display = 'none';
+            document.getElementById('setup-screen').style.display = 'block';
+            clearInterval(timerInterval);
+            // מחיקת קונפטי אם יש
+            document.querySelectorAll('.confetti').forEach(e => e.remove());
+        }
+
+        function restartGame() {
+            if(confirm("האם להתחיל את המשחק מחדש עם אותם שחקנים?")) {
+                players.forEach(p => { p.pos = 1; p.coins = 3; p.immune = false; });
+                turnIndex = 0; isMoving = false; document.getElementById('rollBtn').disabled = false;
+                document.getElementById('game-message').innerText = "מתחילים מחדש! יש לגלגל קוביה.";
+                drawPlayers(); updateTurnIndicator();
+                document.querySelectorAll('.confetti').forEach(e => e.remove());
+            }
+        }
+
+        function openRemovePlayerModal() {
+            const list = document.getElementById('remove-player-list');
+            list.innerHTML = '';
+            players.forEach(p => {
+                list.innerHTML += `
+                    <div class="remove-player-item">
+                        <span>${p.avatar} ${p.name}</span>
+                        <button class="remove-btn" onclick="removePlayer('${p.id}')">הסר שחקן/ית</button>
+                    </div>
+                `;
+            });
+            document.getElementById('remove-player-modal').style.display = 'flex';
+        }
+
+        function closeRemoveModal() {
+            document.getElementById('remove-player-modal').style.display = 'none';
+        }
+
+        function removePlayer(playerId) {
+            const idx = players.findIndex(p => p.id === playerId);
+            if (idx === -1) return;
+            
+            const removedName = players[idx].name;
+            players.splice(idx, 1);
+            
+            // עדכון התור הנוכחי כדי שלא נדלג או ניתקע
+            if (turnIndex >= idx) turnIndex--;
+            if (turnIndex < 0 || turnIndex >= players.length) turnIndex = 0;
+
+            drawPlayers(); updateTurnIndicator(); closeRemoveModal();
+            
+            if (players.length < 2) {
+               document.getElementById('game-message').innerText = "כולם פרשו! המשחק נגמר.";
+               setTimeout(() => endGame(players[0]), 1500); 
+            } else {
+               document.getElementById('game-message').innerText = `${removedName} פרש/ה מהמשחק.`;
+            }
+        }
+
+        // ==========================================
+        // יצירת הלוח (סולמות, נחשים)
+        // ==========================================
         function createBoard() {
             const boardDiv = document.getElementById('board');
             let cellNumbers = [];
             for (let row = 9; row >= 0; row--) {
-                if (row % 2 === 1) { 
-                    for (let col = 1; col <= 10; col++) cellNumbers.push((row * 10) + col);
-                } else { 
-                    for (let col = 10; col >= 1; col--) cellNumbers.push((row * 10) + col);
-                }
+                if (row % 2 === 1) { for (let col = 1; col <= 10; col++) cellNumbers.push((row * 10) + col); } 
+                else { for (let col = 10; col >= 1; col--) cellNumbers.push((row * 10) + col); }
             }
 
             boardDiv.innerHTML = '<svg id="connections"></svg>';
             cellNumbers.forEach(num => {
                 let cell = document.createElement('div');
                 cell.className = 'cell'; cell.id = `cell-${num}`;
+                if (surpriseSquares.includes(num)) cell.classList.add('surprise-cell');
                 cell.innerHTML = `<span>${num}</span><div class="tokens-container" id="tokens-${num}"></div>`;
                 boardDiv.appendChild(cell);
             });
-            drawPlayers();
-            // המתנה לרינדור כדי שמידות ה-SVG יחושבו נכון
-            setTimeout(drawVisualConnections, 100);
+            drawPlayers(); setTimeout(drawVisualConnections, 100);
         }
 
-        // ==========================================
-        // ציור סולמות ונחשים מושקע ומדויק
-        // ==========================================
         function drawVisualConnections() {
             const svg = document.getElementById('connections');
             const board = document.getElementById('board');
@@ -358,53 +484,32 @@
             svg.innerHTML = '';
             const boardRect = board.getBoundingClientRect();
 
-            const getCenter = (num) => {
+            window.getCenterCoords = (num) => {
                 const cell = document.getElementById(`cell-${num}`);
                 if (!cell) return { x: 0, y: 0 };
                 const rect = cell.getBoundingClientRect();
-                return {
-                    x: rect.left - boardRect.left + rect.width / 2,
-                    y: rect.top - boardRect.top + rect.height / 2
-                };
+                return { x: rect.left - boardRect.left + rect.width / 2, y: rect.top - boardRect.top + rect.height / 2 };
             };
 
-            // ציור סולמות עם שני קווים רוחביים (שלבים אמיתיים!)
             for (let [start, end] of Object.entries(ladders)) {
-                let p1 = getCenter(start); let p2 = getCenter(end);
-                
-                // חישוב זוויות למרחק הקווים זה מזה
-                let dx = p2.x - p1.x; let dy = p2.y - p1.y;
-                let length = Math.sqrt(dx*dx + dy*dy);
-                let nx = -dy / length * 10; // מרווח לעמוד שמאל
-                let ny = dx / length * 10;
-                
-                // עמודים ירוקים
+                let p1 = window.getCenterCoords(start), p2 = window.getCenterCoords(end);
+                let dx = p2.x - p1.x, dy = p2.y - p1.y, length = Math.sqrt(dx*dx + dy*dy);
+                let nx = -dy / length * 10, ny = dx / length * 10;
                 svg.innerHTML += `<line x1="${p1.x + nx}" y1="${p1.y + ny}" x2="${p2.x + nx}" y2="${p2.y + ny}" stroke="#2ed573" stroke-width="6" opacity="0.8" stroke-linecap="round"/>`;
                 svg.innerHTML += `<line x1="${p1.x - nx}" y1="${p1.y - ny}" x2="${p2.x - nx}" y2="${p2.y - ny}" stroke="#2ed573" stroke-width="6" opacity="0.8" stroke-linecap="round"/>`;
-                
-                // שלבים רוחביים
                 let numSteps = Math.floor(length / 20);
                 for(let i=1; i<numSteps; i++) {
-                    let fraction = i / numSteps;
-                    let stepX = p1.x + dx * fraction;
-                    let stepY = p1.y + dy * fraction;
+                    let stepX = p1.x + dx * (i/numSteps), stepY = p1.y + dy * (i/numSteps);
                     svg.innerHTML += `<line x1="${stepX + nx}" y1="${stepY + ny}" x2="${stepX - nx}" y2="${stepY - ny}" stroke="#2ed573" stroke-width="4" opacity="0.8"/>`;
                 }
             }
 
-            // ציור נחשים מתפתלים עם ראש
             for (let [start, end] of Object.entries(snakes)) {
-                let p1 = getCenter(start); let p2 = getCenter(end);
-                let dx = p2.x - p1.x; let dy = p2.y - p1.y;
-                let cx = p1.x + dx / 2 - dy * 0.3; let cy = p1.y + dy / 2 + dx * 0.3;
-                
-                // גוף הנחש
+                let p1 = window.getCenterCoords(start), p2 = window.getCenterCoords(end);
+                let dx = p2.x - p1.x, dy = p2.y - p1.y, cx = p1.x + dx / 2 - dy * 0.3, cy = p1.y + dy / 2 + dx * 0.3;
                 svg.innerHTML += `<path d="M ${p1.x} ${p1.y} Q ${cx} ${cy} ${p2.x} ${p2.y}" fill="none" stroke="#ff4757" stroke-width="12" stroke-linecap="round" opacity="0.85"/>`;
-                // דוגמה על הגב
                 svg.innerHTML += `<path d="M ${p1.x} ${p1.y} Q ${cx} ${cy} ${p2.x} ${p2.y}" fill="none" stroke="#ffeaa7" stroke-width="4" stroke-dasharray="8, 12" stroke-linecap="round" opacity="0.9"/>`;
-                // ראש הנחש (בנקודת ההתחלה כי הנחש יורד משם)
                 svg.innerHTML += `<circle cx="${p1.x}" cy="${p1.y}" r="9" fill="#ff4757" stroke="#2f3542" stroke-width="2"/>`;
-                // עיניים
                 svg.innerHTML += `<circle cx="${p1.x - 3}" cy="${p1.y - 3}" r="2" fill="white"/><circle cx="${p1.x + 3}" cy="${p1.y - 3}" r="2" fill="white"/>`;
             }
         }
@@ -419,166 +524,329 @@
                     const token = document.createElement('div'); token.className = 'player-token';
                     if (index === turnIndex) token.classList.add('active');
                     token.style.backgroundColor = player.color; token.title = player.name;
+                    token.innerText = player.avatar;
+                    token.dataset.id = player.id; // שמירת מזהה לאנימציות
                     container.appendChild(token);
                 }
             });
         }
 
         function updateTurnIndicator() {
+            if (players.length === 0) return;
             const cp = players[turnIndex];
             document.getElementById('current-player-indicator').style.backgroundColor = cp.color;
             document.getElementById('current-player-name').innerText = cp.name;
+            document.getElementById('ui-coins').innerText = cp.coins;
+            document.getElementById('ui-immune').style.display = cp.immune ? 'block' : 'none';
             drawPlayers(); 
         }
 
         const sleep = (ms) => new Promise(r => setTimeout(r, ms));
 
         // ==========================================
-        // מהלך התור ואנימציית הטלת קוביה אקראית
+        // מהלך התור
         // ==========================================
         async function takeTurn() {
             if (isMoving) return;
-            isMoving = true;
-            document.getElementById('rollBtn').disabled = true;
-            initAudio();
+            isMoving = true; document.getElementById('rollBtn').disabled = true; initAudio();
 
             const player = players[turnIndex];
             const diceOverlay = document.getElementById('big-dice-overlay');
             const diceNumberElem = document.getElementById('big-dice-number');
-            const diceTextElem = document.getElementById('big-dice-text');
             
-            diceTextElem.innerText = `התור של ${player.name}...`;
-            diceOverlay.style.display = 'flex';
-            diceNumberElem.classList.add('rolling-anim');
+            document.getElementById('big-dice-text').innerText = `התור של ${player.name}...`;
+            diceOverlay.style.display = 'flex'; diceNumberElem.classList.add('rolling-anim');
 
-            // אנימציית "רולטה" שמראה שהמספר באמת אקראי!
             let finalRoll = 0;
             for(let i=0; i<15; i++) {
                 finalRoll = Math.floor(Math.random() * 6) + 1;
-                diceNumberElem.innerText = finalRoll;
-                playSound('tick');
-                await sleep(60 + (i*5)); // מאט קצת לקראת הסוף
+                diceNumberElem.innerText = finalRoll; playSound('tick');
+                await sleep(50 + (i*5)); 
             }
 
-            // התוצאה הסופית המוגרלת
             diceNumberElem.classList.remove('rolling-anim');
-            diceTextElem.innerText = `התור של ${player.name}, יצא:`;
+            document.getElementById('big-dice-text').innerText = `יצא לך:`;
             diceNumberElem.innerText = finalRoll;
             
-            await sleep(1500); // מחכה שיראו את התוצאה
-            diceOverlay.style.display = 'none';
+            await sleep(1200); diceOverlay.style.display = 'none';
             document.getElementById('game-message').innerText = `${player.name} צועד/ת ${finalRoll} צעדים...`;
 
+            // הליכה צעד-צעד רגילה
             for (let i = 0; i < finalRoll; i++) {
                 if (player.pos >= 100) break;
-                player.pos++;
-                playSound('step'); drawPlayers(); await sleep(300); 
+                player.pos++; playSound('step'); drawPlayers(); await sleep(300); 
             }
 
+            evaluateSquare(player);
+        }
+
+        async function evaluateSquare(player) {
             if (player.pos === 100) { endGame(player); return; }
 
-            if (ladders[player.pos]) askMathQuestion(player, 'ladder', ladders[player.pos]);
-            else if (snakes[player.pos]) askMathQuestion(player, 'snake', snakes[player.pos]);
-            else { document.getElementById('game-message').innerText = "תור רגיל הסתיים."; nextTurn(); }
+            if (surpriseSquares.includes(player.pos)) {
+                triggerSurprise(player);
+            } else if (ladders[player.pos]) {
+                askMathQuestion(player, 'ladder', ladders[player.pos]);
+            } else if (snakes[player.pos]) {
+                if (player.immune) {
+                    player.immune = false; playSound('magic');
+                    document.getElementById('game-message').innerText = "🛡️ מגן החסינות שמר עליך מהנחש!";
+                    nextTurn();
+                } else {
+                    askMathQuestion(player, 'snake', snakes[player.pos]);
+                }
+            } else {
+                document.getElementById('game-message').innerText = "תור רגיל הסתיים."; nextTurn(); 
+            }
         }
 
         // ==========================================
-        // מערכת האתגר במתמטיקה (4 קוביות)
+        // ★ חדש: תנועה ישירה ומציאותית על הנחש/סולם ★
         // ==========================================
+        async function animateDirectMove(player, target, type) {
+            return new Promise(resolve => {
+                const board = document.getElementById('board');
+                const token = document.querySelector(`.player-token[data-id="${player.id}"]`);
+                if (!token || !window.getCenterCoords) {
+                    // גיבוי - אם משהו נכשל, זזים רגיל
+                    player.pos = target; drawPlayers(); resolve(); return;
+                }
+
+                const p1 = window.getCenterCoords(player.pos);
+                const p2 = window.getCenterCoords(target);
+
+                // יצירת עותק שמרחף מעל הלוח
+                const animToken = token.cloneNode(true);
+                animToken.style.position = 'absolute';
+                animToken.style.margin = '0';
+                animToken.style.zIndex = '100';
+                board.appendChild(animToken);
+                token.style.display = 'none'; // הסתרת המקורי
+
+                const duration = 1500; // שנייה וחצי של אנימציה
+                const startTime = performance.now();
+                playSound(type === 'ladder' ? 'slideUp' : 'slideDown');
+
+                // נקודות לשליטה על עיקול הנחש
+                let cx, cy;
+                if (type === 'snake') {
+                    const dx = p2.x - p1.x; const dy = p2.y - p1.y;
+                    cx = p1.x + dx / 2 - dy * 0.3; cy = p1.y + dy / 2 + dx * 0.3;
+                }
+
+                function step(time) {
+                    let progress = (time - startTime) / duration;
+                    if (progress > 1) progress = 1;
+
+                    let currentX, currentY;
+                    if (type === 'ladder') {
+                        // תנועה בקו ישר
+                        currentX = p1.x + (p2.x - p1.x) * progress;
+                        currentY = p1.y + (p2.y - p1.y) * progress;
+                        animToken.style.transform = `translate(-50%, -50%) scale(1.5)`;
+                    } else {
+                        // תנועה גלית (בזייר) בדיוק על גוף הנחש
+                        const inv = 1 - progress;
+                        currentX = inv * inv * p1.x + 2 * inv * progress * cx + progress * progress * p2.x;
+                        currentY = inv * inv * p1.y + 2 * inv * progress * cy + progress * progress * p2.y;
+                        // התנדנדות קלה בזמן ההחלקה בנחש
+                        animToken.style.transform = `translate(-50%, -50%) scale(1.5) rotate(${Math.sin(progress * 20) * 15}deg)`;
+                    }
+
+                    animToken.style.left = currentX + 'px';
+                    animToken.style.top = currentY + 'px';
+
+                    if (progress < 1) {
+                        requestAnimationFrame(step);
+                    } else {
+                        animToken.remove();
+                        player.pos = target;
+                        drawPlayers(); 
+                        resolve();
+                    }
+                }
+                requestAnimationFrame(step);
+            });
+        }
+
+        // ==========================================
+        // הפתעות
+        // ==========================================
+        function triggerSurprise(player) {
+            playSound('magic');
+            const surprises = [
+                { msg: "מצאת אוצר! קבל/י מטבע 1 🪙", action: () => player.coins++ },
+                { msg: "קיצור דרך סודי! קדימה 3 צעדים 🚀", action: async () => { await walkPlayer(player, Math.min(100, player.pos+3)); evaluateSquare(player); } },
+                { msg: "אוי, קליפת בננה... אחורה 2 צעדים 🍌", action: async () => { await walkPlayer(player, Math.max(1, player.pos-2)); evaluateSquare(player); } },
+                { msg: "מגן חסינות! הנחש הבא לא יכיש אותך 🛡️", action: () => player.immune = true }
+            ];
+            
+            const choice = surprises[Math.floor(Math.random() * surprises.length)];
+            document.getElementById('surprise-message').innerText = choice.msg;
+            document.getElementById('surprise-modal').style.display = 'flex';
+            window.currentSurpriseAction = choice.action;
+        }
+
+        async function closeSurprise() {
+            document.getElementById('surprise-modal').style.display = 'none';
+            if (window.currentSurpriseAction) {
+                let action = window.currentSurpriseAction;
+                window.currentSurpriseAction = null;
+                let isWalking = action.toString().includes('walkPlayer');
+                await action();
+                if (!isWalking) nextTurn(); 
+            } else { nextTurn(); }
+        }
+
+        // פונקציית הליכה צעד-צעד להפתעות
+        async function walkPlayer(player, target) {
+            let step = player.pos < target ? 1 : -1;
+            while(player.pos !== target) {
+                player.pos += step; playSound('step'); drawPlayers(); await sleep(150);
+            }
+        }
+
+        // ==========================================
+        // מערכת האתגר (חידות)
+        // ==========================================
+        function generateQuestion() {
+            let n1, n2;
+            if (difficulty === 'easy') { n1 = Math.floor(Math.random()*6)+1; n2 = Math.floor(Math.random()*6)+1; } 
+            else if (difficulty === 'medium') { const getD = () => [1,2,3,4,5,0][Math.floor(Math.random()*6)]; n1 = getD() + getD(); n2 = getD() + getD(); } 
+            else { n1 = Math.floor(Math.random()*10)+1; n2 = Math.floor(Math.random()*10)+1; }
+            return { n1, n2, correct: n1 * n2 };
+        }
+
         function askMathQuestion(player, type, target) {
-            const getDie = () => [1,2,3,4,5,0][Math.floor(Math.random()*6)];
-            const d1 = getDie(); const d2 = getDie(); const d3 = getDie(); const d4 = getDie();
-            const num1 = d1 + d2; const num2 = d3 + d4;
-            currentChallengeData = { player, type, target, correct: num1 * num2 };
+            let q = generateQuestion();
+            currentChallengeData = { player, type, target, correct: q.correct };
 
             const isLadder = type === 'ladder';
             document.getElementById('challenge-title').innerText = isLadder ? '🪜 טיפוס סולם!' : '🐍 סכנת נחש!';
             document.getElementById('modal-content-box').style.borderColor = isLadder ? '#2ed573' : '#ff4757';
             document.getElementById('challenge-title').style.color = isLadder ? '#2ed573' : '#ff4757';
             
-            document.getElementById('challenge-desc').innerText = isLadder ? 'פתרון נכון יוביל למעלה!' : 'פתרון נכון יציל אותך!';
-            document.getElementById('dice-visuals').innerHTML = `<span style="color:#1e90ff">${num1}</span> ✖ <span style="color:#ffa502">${num2}</span>`;
-            document.getElementById('math-question').innerText = `${num1} × ${num2} = ?`;
+            let diffTxt = difficulty==='hard' && isLadder ? ' (טעות = ירידה 2 צעדים!)' : '';
+            document.getElementById('challenge-desc').innerText = (isLadder ? 'פתרון נכון יוביל למעלה!' : 'פתרון נכון יציל אותך!') + diffTxt;
+            
+            document.getElementById('dice-visuals').innerHTML = `<span style="color:#1e90ff">${q.n1}</span> ✖ <span style="color:#ffa502">${q.n2}</span>`;
+            document.getElementById('math-question').innerText = `${q.n1} × ${q.n2} = ?`;
             document.getElementById('answer-input').value = '';
+            document.getElementById('hint-display').innerText = '';
+
+            document.getElementById('btn-hint').disabled = player.coins < 1;
+            document.getElementById('btn-swap').disabled = player.coins < 2;
 
             document.getElementById('challenge-modal').style.display = 'flex';
-            
-            // פוקוס אוטומטי על התיבה אחרי שהחלון מופיע
             setTimeout(() => { document.getElementById('answer-input').focus(); }, 100);
+
+            startTimer();
         }
 
-        async function checkAnswer() {
-            const ansElem = document.getElementById('answer-input');
-            if (ansElem.value === "") return; // מונע בדיקה אם התיבה ריקה
+        function startTimer() {
+            clearInterval(timerInterval); timeLeft = 20;
+            const bar = document.getElementById('timer-bar');
+            bar.style.width = '100%'; bar.style.backgroundColor = '#2ed573';
             
-            const ans = parseInt(ansElem.value);
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                bar.style.width = ((timeLeft / 20) * 100) + '%';
+                if (timeLeft === 5) bar.style.backgroundColor = '#ff4757';
+                else if (timeLeft === 10) bar.style.backgroundColor = '#ffa502';
+                
+                if (timeLeft <= 5 && timeLeft > 0) playSound('timer');
+                if (timeLeft <= 0) { clearInterval(timerInterval); checkAnswer(true); }
+            }, 1000);
+        }
+
+        function buyHint() {
+            const p = currentChallengeData.player;
+            if (p.coins >= 1) {
+                p.coins--; playSound('magic'); updateTurnIndicator();
+                document.getElementById('btn-hint').disabled = true;
+                document.getElementById('btn-swap').disabled = p.coins < 2;
+                let lastDigit = currentChallengeData.correct % 10;
+                document.getElementById('hint-display').innerText = `💡 רמז: התשובה מסתיימת ב-${lastDigit}`;
+                document.getElementById('answer-input').focus();
+            }
+        }
+
+        function buySwap() {
+            const p = currentChallengeData.player;
+            if (p.coins >= 2) {
+                p.coins -= 2; playSound('magic'); updateTurnIndicator();
+                askMathQuestion(p, currentChallengeData.type, currentChallengeData.target); 
+            }
+        }
+
+        async function checkAnswer(isTimeout) {
+            const ansElem = document.getElementById('answer-input');
+            if (!isTimeout && ansElem.value === "") return; 
+            
+            clearInterval(timerInterval);
+            const ans = isTimeout ? -1 : parseInt(ansElem.value);
             const data = currentChallengeData;
             document.getElementById('challenge-modal').style.display = 'none';
 
             if (ans === data.correct) {
                 playSound('correct');
                 if (data.type === 'ladder') {
-                    document.getElementById('game-message').innerText = "מעולה! עולים בסולם! 🪜";
-                    await slidePlayer(data.player, data.target);
+                    document.getElementById('game-message').innerText = "מעולה! מטפסים למעלה! 🪜";
+                    // ★ שימוש באנימציה החדשה ★
+                    await animateDirectMove(data.player, data.target, 'ladder');
                 } else {
                     document.getElementById('game-message').innerText = "כל הכבוד! נשארים במקום! 🎉";
                 }
             } else {
                 playSound('wrong');
+                let reason = isTimeout ? "נגמר הזמן!" : `טעות (התשובה ${data.correct}).`;
                 if (data.type === 'ladder') {
-                    document.getElementById('game-message').innerText = `טעות (התשובה ${data.correct}). נשארים למטה.`;
+                    if (difficulty === 'hard') {
+                        document.getElementById('game-message').innerText = `${reason} עונש: יורדים 2 צעדים!`;
+                        await walkPlayer(data.player, Math.max(1, data.player.pos - 2));
+                    } else {
+                        document.getElementById('game-message').innerText = `${reason} נשארים למטה.`;
+                    }
                 } else {
-                    document.getElementById('game-message').innerText = `טעות (התשובה ${data.correct}). אופס! מחליקים... 🐍`;
-                    await slidePlayer(data.player, data.target);
+                    document.getElementById('game-message').innerText = `${reason} מחליקים למטה... 🐍`;
+                    // ★ שימוש באנימציה החדשה ★
+                    await animateDirectMove(data.player, data.target, 'snake');
                 }
             }
 
-            if (data.player.pos === 100) endGame(data.player);
+            if (data.player.pos >= 100) endGame(data.player);
             else nextTurn();
         }
 
-        async function slidePlayer(player, target) {
-            let step = player.pos < target ? 1 : -1;
-            while(player.pos !== target) {
-                player.pos += step; playSound('step'); drawPlayers(); await sleep(80);
-            }
-        }
-
-        function nextTurn() {
-            turnIndex = (turnIndex + 1) % players.length;
-            updateTurnIndicator();
-            document.getElementById('rollBtn').disabled = false;
-            isMoving = false;
+        function nextTurn() { 
+            if (players.length === 0) return;
+            turnIndex = (turnIndex + 1) % players.length; 
+            updateTurnIndicator(); 
+            document.getElementById('rollBtn').disabled = false; 
+            isMoving = false; 
         }
 
         // ==========================================
-        // סיום משחק וקונפטי!
+        // סיום וקונפטי
         // ==========================================
         function createConfetti() {
             const colors = ['#ff4757', '#1dd1a1', '#f1c40f', '#3498db', '#9b59b6'];
             for(let i=0; i<80; i++) {
-                let conf = document.createElement('div');
-                conf.className = 'confetti';
-                conf.style.left = Math.random() * 100 + 'vw';
-                conf.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-                conf.style.animationDuration = (Math.random() * 3 + 2) + 's';
-                conf.style.animationDelay = (Math.random() * 0.5) + 's';
+                let conf = document.createElement('div'); conf.className = 'confetti';
+                conf.style.left = Math.random() * 100 + 'vw'; conf.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                conf.style.animationDuration = (Math.random() * 3 + 2) + 's'; conf.style.animationDelay = (Math.random() * 0.5) + 's';
                 document.body.appendChild(conf);
             }
         }
 
         function endGame(winner) {
-            playSound('win');
-            createConfetti();
-            document.getElementById('winner-message').innerText = `כל הכבוד ${winner.name}!`;
+            playSound('win'); createConfetti();
+            document.getElementById('winner-message').innerText = `כל הכבוד ${winner.name}! ${winner.avatar}`;
             document.getElementById('game-message').innerText = "המשחק הסתיים.";
             setTimeout(() => { document.getElementById('game-over-modal').style.display = 'flex'; }, 1000);
         }
 
-        // תמיכה ב-Enter לבדיקת התשובה
-        document.getElementById('answer-input').addEventListener('keypress', e => {
-            if (e.key === 'Enter') checkAnswer();
-        });
+        document.getElementById('answer-input').addEventListener('keypress', e => { if (e.key === 'Enter') checkAnswer(false); });
     </script>
 </body>
 </html>

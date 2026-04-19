@@ -4,60 +4,139 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>סולמות ונחשים - הרפתקאת לוח הכפל</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🐍</text></svg>">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎲</text></svg>">
     
     <style>
         /* ==========================================
-           עיצוב בסיסי (Reset & Base)
+           משתני עיצוב ובחירת ערכות נושא (Themes)
            ========================================== */
         :root {
+            /* עיצוב קלאסי (ברירת מחדל) */
             --primary-color: #ff4757;
             --secondary-color: #1dd1a1;
             --bg-color: #f1f2f6;
             --text-color: #2f3542;
+            --board-border: #ff7f50;
+            --cell-c1: #ff6b81;
+            --cell-c2: #1e90ff;
+            --cell-c3: #2ed573;
+            --cell-c4: #ffa502;
+            --h1-color: #ff6b81;
+            --bg-pattern: radial-gradient(#dfe4ea 2px, transparent 2px);
+            --cell-radius: 8px;
+            --cell-gap: 2px;
+            --board-bg: #ffffff;
+            --panel-bg: rgba(255,255,255,0.95);
         }
 
+        body.theme-princess {
+            --primary-color: #ff9ff3;
+            --secondary-color: #feca57;
+            --bg-color: #fff0f5;
+            --board-border: #fd79a8;
+            --cell-c1: #fab1a0;
+            --cell-c2: #81ecec;
+            --cell-c3: #74b9ff;
+            --cell-c4: #a29bfe;
+            --h1-color: #e84393;
+            --bg-pattern: radial-gradient(#fd79a8 2px, transparent 2px);
+            --cell-radius: 50%; /* משבצות עגולות כמו אבני פיות */
+            --cell-gap: 4px;
+            --board-bg: transparent;
+            --panel-bg: rgba(255, 240, 245, 0.95);
+        }
+
+        body.theme-space {
+            --primary-color: #ff9f43;
+            --secondary-color: #0abde3;
+            --bg-color: #1e272e;
+            --text-color: #d2dae2;
+            --board-border: #0abde3;
+            --cell-c1: #341f97;
+            --cell-c2: #5f27cd;
+            --cell-c3: #222f3e;
+            --cell-c4: #10ac84;
+            --h1-color: #0abde3;
+            --bg-pattern: radial-gradient(#d2dae2 1px, transparent 1px);
+            --cell-radius: 4px;
+            --cell-gap: 1px;
+            --board-bg: #1e272e;
+            --panel-bg: rgba(30, 39, 46, 0.95);
+        }
+
+        body.theme-jungle {
+            --primary-color: #e58e26;
+            --secondary-color: #38ada9;
+            --bg-color: #b8e994;
+            --text-color: #1e272e;
+            --board-border: #079992;
+            --cell-c1: #78e08f;
+            --cell-c2: #38ada9;
+            --cell-c3: #e55039;
+            --cell-c4: #f6b93b;
+            --h1-color: #079992;
+            --bg-pattern: repeating-linear-gradient(45deg, rgba(255,255,255,0.1), rgba(255,255,255,0.1) 10px, transparent 10px, transparent 20px);
+            --cell-radius: 0px; /* אריחים חדים */
+            --cell-gap: 2px;
+            --board-bg: #b8e994;
+            --panel-bg: rgba(255, 255, 255, 0.9);
+        }
+
+        /* ==========================================
+           עיצוב בסיסי (Reset & Base)
+           ========================================== */
         html, body {
             margin: 0; padding: 0;
             width: 100vw; height: 100vh;
             overflow: hidden; 
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: var(--bg-color);
-            background-image: radial-gradient(#dfe4ea 2px, transparent 2px);
+            background-image: var(--bg-pattern);
             background-size: 30px 30px;
             color: var(--text-color);
             display: flex; flex-direction: column; align-items: center;
+            transition: background-color 0.5s, color 0.5s;
         }
 
         h1 { 
-            color: #ff6b81; font-size: clamp(1.2rem, 3.5vh, 2rem);
-            margin: 1vh 0; text-shadow: 2px 2px 0px #fff, 4px 4px 0px rgba(0,0,0,0.1); 
-            font-weight: 900; flex-shrink: 0;
+            color: var(--h1-color); font-size: clamp(1.2rem, 3.5vh, 2rem);
+            margin: 1vh 0; text-shadow: 2px 2px 0px rgba(255,255,255,0.7), 4px 4px 0px rgba(0,0,0,0.2); 
+            font-weight: 900; flex-shrink: 0; transition: color 0.5s;
+        }
+
+        /* עיצוב למסכים כהים בחלל */
+        body.theme-space h1 { text-shadow: 0 0 10px var(--h1-color); }
+        body.theme-space .modal-content, body.theme-space #setup-screen, body.theme-space #status-bar {
+            color: white; border-color: var(--secondary-color);
+        }
+        body.theme-space .setup-group select, body.theme-space .player-setup-row input {
+            background: #2f3640; color: white; border-color: #576574;
         }
 
         /* ==========================================
            מסך פתיחה והגדרות
            ========================================== */
         #setup-screen {
-            background: white; padding: 2vh 2vw; border-radius: 20px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1); text-align: center;
-            width: 90%; max-width: 500px; border: 4px dashed #ff4757;
-            margin: auto; overflow-y: auto; max-height: 85vh;
+            background: var(--panel-bg); padding: 2vh 2vw; border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2); text-align: center;
+            width: 90%; max-width: 500px; border: 4px dashed var(--primary-color);
+            margin: auto; overflow-y: auto; max-height: 85vh; 
+            transition: all 0.5s;
         }
 
-        .setup-group { margin-bottom: 2vh; border-bottom: 2px solid #eee; padding-bottom: 1vh; font-weight: bold; font-size: 1.1rem; display: flex; justify-content: center; gap: 10px; align-items: center;}
-        .setup-group select { font-size: 1rem; padding: 5px; border-radius: 8px; font-weight: bold; border: 2px solid #ccc; outline: none; }
+        .setup-group { margin-bottom: 2vh; border-bottom: 2px solid rgba(0,0,0,0.1); padding-bottom: 1vh; font-weight: bold; font-size: 1.1rem; display: flex; justify-content: center; gap: 10px; align-items: center; flex-wrap: wrap;}
+        .setup-group select { font-size: 1rem; padding: 6px; border-radius: 8px; font-weight: bold; border: 2px solid #ccc; outline: none; cursor: pointer; transition: all 0.3s;}
         
         .player-setup-row {
             display: flex; align-items: center; justify-content: space-between; gap: 5px;
-            margin-bottom: 1vh; background: #f8f9fa; padding: 1vh;
-            border-radius: 12px; border: 2px solid #eccc68;
+            margin-bottom: 1vh; background: rgba(0,0,0,0.05); padding: 1vh;
+            border-radius: 12px; border: 2px solid var(--secondary-color); transition: all 0.5s;
         }
         .player-setup-row input[type="text"] {
-            padding: 8px; border: 2px solid #dfe4ea; border-radius: 8px;
+            padding: 8px; border: 2px solid rgba(0,0,0,0.2); border-radius: 8px;
             width: 35%; font-size: 0.9rem; font-weight: bold; text-align: center;
         }
-        .avatar-select { font-size: 1.2rem; padding: 5px; border-radius: 8px; border: 2px solid #dfe4ea; background: white; cursor: pointer; }
+        .avatar-select { font-size: 1.2rem; padding: 5px; border-radius: 8px; border: 2px solid rgba(0,0,0,0.2); cursor: pointer; }
         .color-picker { width: 35px; height: 35px; border: 2px solid #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.2); cursor: pointer; border-radius: 50%; }
 
         /* ==========================================
@@ -65,58 +144,58 @@
            ========================================== */
         #game-screen { display: none; width: 100%; height: 100%; flex-direction: column; align-items: center; padding: 0.5vh 1vw; box-sizing: border-box;}
 
-        /* סרגל ניווט עליון חדש! */
-        #top-controls {
-            display: flex; gap: 10px; margin-bottom: 1vh; justify-content: center; flex-wrap: wrap;
-        }
+        #top-controls { display: flex; gap: 10px; margin-bottom: 1vh; justify-content: center; flex-wrap: wrap; }
         .control-btn {
-            background: white; border: 2px solid #70a1ff; color: #3742fa;
+            background: var(--panel-bg); border: 2px solid var(--secondary-color); color: var(--text-color);
             border-radius: 8px; padding: 5px 12px; font-weight: bold; font-size: 0.9rem;
             cursor: pointer; transition: all 0.2s; box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
-        .control-btn:hover { background: #70a1ff; color: white; transform: translateY(-2px); }
+        .control-btn:hover { background: var(--secondary-color); color: white; transform: translateY(-2px); }
+        body.theme-space .control-btn { color: white; }
 
         #status-bar {
-            background: white; padding: 1vh 2vw; border-radius: 15px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1); margin-bottom: 1vh;
-            font-size: clamp(0.9rem, 2vh, 1.2rem); font-weight: bold; border: 3px solid #70a1ff;
+            background: var(--panel-bg); padding: 1vh 2vw; border-radius: 15px; 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2); margin-bottom: 1vh;
+            font-size: clamp(0.9rem, 2vh, 1.2rem); font-weight: bold; border: 3px solid var(--secondary-color);
             text-align: center; flex-shrink: 0; width: 95%; max-width: 600px;
-            display: flex; justify-content: space-between; align-items: center;
+            display: flex; justify-content: space-between; align-items: center; transition: all 0.5s;
         }
-        .player-stats { display: flex; gap: 15px; font-size: 0.9rem; color: #57606f; }
+        .player-stats { display: flex; gap: 15px; font-size: 0.9rem; opacity: 0.8; }
         #current-player-indicator {
             display: inline-block; width: 2vh; height: 2vh; border-radius: 50%;
             margin-left: 5px; border: 2px solid #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.3); vertical-align: middle;
         }
         
         #board-wrapper {
-            position: relative; background: #ffffff; border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.15); border: 4px solid #ff7f50;
-            padding: 4px; margin-bottom: 1vh;
+            position: relative; background: var(--board-bg); border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3); border: 4px solid var(--board-border);
+            padding: 4px; margin-bottom: 1vh; transition: all 0.5s;
             width: 100%; max-width: min(90vw, 62vh); height: 100%; max-height: min(90vw, 62vh);
             aspect-ratio: 1; flex-shrink: 1;
         }
+        body.theme-space #board-wrapper { box-shadow: 0 0 25px var(--board-border); }
 
-        #board { display: grid; grid-template-columns: repeat(10, 1fr); gap: 2px; width: 100%; height: 100%; position: relative; }
+        #board { display: grid; grid-template-columns: repeat(10, 1fr); gap: var(--cell-gap); width: 100%; height: 100%; position: relative; transition: gap 0.5s;}
         #connections { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 2; }
 
         .cell {
-            border-radius: 8px; display: flex; align-items: flex-start; justify-content: flex-end;
-            font-size: clamp(10px, 1.5vh, 16px); font-weight: 900; color: rgba(255,255,255,0.9);
+            border-radius: var(--cell-radius); display: flex; align-items: flex-start; justify-content: flex-end;
+            font-size: clamp(10px, 1.5vh, 16px); font-weight: 900; color: rgba(255,255,255,0.95);
             position: relative; padding: 2px; box-sizing: border-box;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.5); box-shadow: inset 0 0 5px rgba(0,0,0,0.1);
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.7); box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
+            transition: all 0.5s;
         }
 
-        .cell:nth-child(4n+1) { background-color: #ff6b81; background-image: radial-gradient(rgba(255,255,255,0.3) 20%, transparent 20%); background-size: 10px 10px; }
-        .cell:nth-child(4n+2) { background-color: #1e90ff; background-image: linear-gradient(45deg, rgba(255,255,255,0.2) 25%, transparent 25%, transparent 50%, rgba(255,255,255,0.2) 50%, rgba(255,255,255,0.2) 75%, transparent 75%, transparent); background-size: 15px 15px; }
-        .cell:nth-child(4n+3) { background-color: #2ed573; background-image: repeating-linear-gradient(0deg, transparent, transparent 10px, rgba(255,255,255,0.2) 10px, rgba(255,255,255,0.2) 20px); }
-        .cell:nth-child(4n+4) { background-color: #ffa502; background-image: radial-gradient(circle at 0 0, rgba(255,255,255,0.2) 20%, transparent 21%); background-size: 15px 15px;}
-        .cell:nth-child(1), .cell:nth-child(100) { background: #eccc68 !important; color: #2f3542; border: 2px solid #ff4757;}
+        .cell:nth-child(4n+1) { background-color: var(--cell-c1); }
+        .cell:nth-child(4n+2) { background-color: var(--cell-c2); }
+        .cell:nth-child(4n+3) { background-color: var(--cell-c3); }
+        .cell:nth-child(4n+4) { background-color: var(--cell-c4); }
+        .cell:nth-child(1), .cell:nth-child(100) { background: #feca57 !important; color: #2f3542; border: 2px solid white; text-shadow: none;}
 
         .surprise-cell::before {
             content: '❓'; position: absolute; font-size: clamp(15px, 2.5vh, 25px);
             top: 50%; left: 50%; transform: translate(-50%, -50%);
-            opacity: 0.5; text-shadow: none;
+            opacity: 0.6; text-shadow: 1px 1px 2px black;
         }
 
         .tokens-container {
@@ -124,40 +203,51 @@
             display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: flex-start; z-index: 5;
         }
 
+        /* עיצוב משופר לשחקנים */
         .player-token {
-            width: 35%; height: 35%; border-radius: 50%; border: 2px solid white;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.4); margin: 1px; transition: transform 0.2s;
-            display: flex; justify-content: center; align-items: center; font-size: clamp(10px, 1.8vh, 18px);
+            width: 35%; height: 35%; border-radius: 50%; 
+            border: 3px solid white; 
+            box-shadow: 0 3px 6px rgba(0,0,0,0.6); 
+            margin: 1px; transition: transform 0.2s;
+            display: flex; justify-content: center; align-items: center; 
+            font-size: clamp(10px, 1.8vh, 18px); z-index: 5;
         }
 
         .player-token.active {
-            border: 2px solid #fff; box-shadow: 0 0 10px 3px rgba(255,255,255,0.8);
-            transform: scale(1.5); animation: bounce 0.5s infinite alternate; z-index: 10;
+            border: 4px solid #fff; 
+            box-shadow: 0 0 15px 6px var(--primary-color), inset 0 0 5px 2px rgba(255,255,255,0.8);
+            transform: scale(1.2); 
+            animation: pulse-glow 0.6s infinite alternate; 
+            z-index: 20; 
         }
-        @keyframes bounce { from { transform: translateY(0) scale(1.5); } to { transform: translateY(-5px) scale(1.5); } }
+        @keyframes pulse-glow { 
+            from { transform: translateY(0) scale(1.2); box-shadow: 0 0 10px 4px var(--primary-color); } 
+            to { transform: translateY(-5px) scale(1.2); box-shadow: 0 0 20px 8px var(--primary-color); } 
+        }
 
         .btn {
             padding: 1vh 3vw; font-size: clamp(1rem, 2.5vh, 1.3rem); font-weight: 900; cursor: pointer;
-            background: linear-gradient(135deg, #ff4757, #ff6b81); color: white;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)); color: white;
             border: none; border-radius: 50px; flex-shrink: 0; margin-top: 0.5vh;
-            box-shadow: 0 6px 15px rgba(255, 71, 87, 0.4); transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3); transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
         }
-        .btn:hover:not(:disabled) { transform: translateY(-2px) scale(1.05); box-shadow: 0 8px 20px rgba(255, 71, 87, 0.5); }
+        .btn:hover:not(:disabled) { transform: translateY(-2px) scale(1.05); box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4); }
         .btn:active:not(:disabled) { transform: translateY(1px) scale(0.95); }
-        .btn:disabled { background: #ced4da; box-shadow: none; cursor: not-allowed; }
+        .btn:disabled { background: #ced4da; box-shadow: none; cursor: not-allowed; text-shadow: none;}
 
         /* ==========================================
            מסך קוביה
            ========================================== */
         #big-dice-overlay {
             display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(255,255,255,0.95); z-index: 50; border-radius: 10px;
+            background: var(--panel-bg); z-index: 50; border-radius: 10px;
             flex-direction: column; justify-content: center; align-items: center; backdrop-filter: blur(2px);
         }
-        #big-dice-number { font-size: min(150px, 25vh); font-weight: 900; color: #ff4757; text-shadow: 4px 4px 0px #ffeaa7; }
+        #big-dice-number { font-size: min(150px, 25vh); font-weight: 900; color: var(--primary-color); text-shadow: 4px 4px 0px var(--secondary-color); }
         .rolling-anim { animation: shake 0.1s infinite; }
         @keyframes shake { 0% { transform: translate(1px, 1px) rotate(0deg); } 50% { transform: translate(-1px, -2px) rotate(-5deg); } 100% { transform: translate(-3px, 0px) rotate(5deg); } }
-        #big-dice-text { font-size: clamp(1.2rem, 3vh, 2rem); font-weight: bold; color: #2f3542; margin-top: 2vh; text-align: center; padding: 0 10px;}
+        #big-dice-text { font-size: clamp(1.2rem, 3vh, 2rem); font-weight: bold; margin-top: 2vh; text-align: center; padding: 0 10px;}
 
         /* ==========================================
            חלונות קופצים (מודלים)
@@ -167,68 +257,78 @@
             background: rgba(0,0,0,0.7); z-index: 100; justify-content: center; align-items: center; backdrop-filter: blur(5px);
         }
         .modal-content {
-            background: white; padding: 2.5vh 3vw; border-radius: 25px; position: relative;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.3); text-align: center;
+            background: var(--panel-bg); padding: 2.5vh 3vw; border-radius: 25px; position: relative;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3); text-align: center; 
             width: 90%; max-width: 420px; animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            border: 5px solid #1dd1a1; max-height: 95vh; overflow-y: auto;
+            border: 5px solid var(--secondary-color); max-height: 95vh; overflow-y: auto;
         }
         @keyframes popIn { from {transform: scale(0.5); opacity:0;} to {transform: scale(1); opacity:1;} }
         
         .modal h2 { margin: 0 0 1vh 0; font-size: clamp(1.5rem, 3vh, 2rem); font-weight: 900;}
         
-        /* רשימת שחקנים בחלון פרישה */
         .remove-player-list { display: flex; flex-direction: column; gap: 10px; margin: 2vh 0; text-align: right;}
-        .remove-player-item { display: flex; justify-content: space-between; align-items: center; padding: 10px; background: #f1f2f6; border-radius: 10px;}
+        .remove-player-item { display: flex; justify-content: space-between; align-items: center; padding: 10px; background: rgba(0,0,0,0.05); border-radius: 10px;}
         .remove-btn { background: #ff4757; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; font-weight: bold;}
         .remove-btn:hover { background: #c0392b; }
 
-        .dice-visuals { font-size: clamp(1.2rem, 3vh, 1.6rem); margin: 1vh 0; background: #f1f2f6; padding: 1vh; border-radius: 15px; font-weight:bold;}
+        .dice-visuals { font-size: clamp(1.2rem, 3vh, 1.6rem); margin: 1vh 0; background: rgba(0,0,0,0.05); padding: 1vh; border-radius: 15px; font-weight:bold;}
         .math-question { font-size: clamp(2rem, 4vh, 3rem); font-weight: 900; color: var(--primary-color); margin: 1.5vh 0; direction: ltr;}
         .answer-input {
             padding: 1vh; font-size: clamp(1.5rem, 3vh, 2rem); width: 120px; font-weight:bold;
-            text-align: center; border: 4px solid #dfe4ea; border-radius: 15px; margin-bottom: 1.5vh;
-            outline: none; transition: all 0.3s;
+            text-align: center; border: 4px solid var(--secondary-color); border-radius: 15px; margin-bottom: 1.5vh;
+            outline: none; transition: all 0.3s; background: white; color: black;
         }
-        .answer-input:focus { border-color: var(--secondary-color); box-shadow: 0 0 15px rgba(29, 209, 161, 0.5); }
+        .answer-input:focus { box-shadow: 0 0 15px var(--secondary-color); }
         
-        /* טיימר וכוחות */
-        #timer-container { width: 100%; height: 15px; background: #eee; border-radius: 10px; overflow: hidden; margin-bottom: 1.5vh; box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);}
+        #timer-container { width: 100%; height: 15px; background: rgba(0,0,0,0.1); border-radius: 10px; overflow: hidden; margin-bottom: 1.5vh; box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);}
         #timer-bar { width: 100%; height: 100%; background: #2ed573; transition: width 1s linear, background-color 0.5s; }
         
-        .powerups-panel { display: flex; justify-content: center; gap: 10px; margin-bottom: 1.5vh; border-top: 2px dashed #eee; padding-top: 1.5vh;}
+        .powerups-panel { display: flex; justify-content: center; gap: 10px; margin-bottom: 1.5vh; border-top: 2px dashed rgba(0,0,0,0.1); padding-top: 1.5vh;}
         .powerup-btn { 
-            background: #f8f9fa; border: 2px solid #eccc68; padding: 8px 12px; border-radius: 12px;
+            background: rgba(255,255,255,0.8); border: 2px solid var(--secondary-color); padding: 8px 12px; border-radius: 12px; color: black;
             font-weight: bold; cursor: pointer; display: flex; flex-direction: column; align-items: center; font-size: 0.85rem;
         }
-        .powerup-btn:hover:not(:disabled) { background: #fff3cd; transform: translateY(-2px); }
+        .powerup-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.1);}
         .powerup-btn:disabled { opacity: 0.5; cursor: not-allowed; border-color: #ccc; }
-        #hint-display { color: #e15f41; font-weight: bold; font-size: 1.1rem; min-height: 25px;}
+        #hint-display { color: var(--primary-color); font-weight: bold; font-size: 1.1rem; min-height: 25px;}
 
-        /* קונפטי */
         .confetti { position: absolute; width: 10px; height: 10px; z-index: 999; animation: fall linear forwards; }
         @keyframes fall { to { transform: translateY(100vh) rotate(720deg); } }
     </style>
 </head>
-<body>
+<body class="theme-classic">
 
     <h1>הרפתקאת לוח הכפל 🎲</h1>
 
     <div id="setup-screen">
         <h2>הכנות למשחק</h2>
+        
         <div class="setup-group">
-            <label>כמה שחקנים/ות?</label>
+            <label>🎨 עיצוב הלוח:</label>
+            <select id="game-theme" onchange="applyTheme()">
+                <option value="theme-classic">🌈 קלאסי (צבעוני)</option>
+                <option value="theme-princess">👑 נסיכות (קסום)</option>
+                <option value="theme-space">🚀 חלל (מדע בדיוני)</option>
+                <option value="theme-jungle">🌴 ג'ונגל (טבע פראי)</option>
+            </select>
+        </div>
+
+        <div class="setup-group">
+            <label>👥 כמה שחקנים/ות?</label>
             <select id="player-count" onchange="renderPlayerSetup()">
                 <option value="2">2</option><option value="3">3</option><option value="4">4</option>
             </select>
         </div>
+
         <div class="setup-group" style="margin-bottom: 3vh;">
-            <label>רמת קושי:</label>
+            <label>🧠 רמת קושי:</label>
             <select id="game-difficulty">
-                <option value="easy">קל (עד 6x6)</option>
-                <option value="medium" selected>בינוני (עד 10x10, שיטת ה-4)</option>
-                <option value="hard">קשה (אקראי עד 10x10 + עונשים)</option>
+                <option value="easy">🟢 קל (עד 6x6)</option>
+                <option value="medium" selected>🟡 בינוני (עד 10x10, שיטת ה-4)</option>
+                <option value="hard">🔴 קשה (אקראי 10x10 + עונשים)</option>
             </select>
         </div>
+
         <div id="player-config-list"></div>
         <button class="btn" onclick="startGame()" style="margin-top:2vh;">בואו נתחיל! 🚀</button>
     </div>
@@ -243,7 +343,7 @@
         <div id="status-bar">
             <div>
                 <span>תור:</span> <span id="current-player-indicator"></span> <span id="current-player-name"></span>
-                <div id="game-message" style="font-weight:normal; font-size:0.9rem; color:#57606f;">יש לגלגל קוביה!</div>
+                <div id="game-message" style="font-weight:normal; font-size:0.9rem; opacity:0.8;">יש לגלגל קוביה!</div>
             </div>
             <div class="player-stats">
                 <div title="מטבעות">🪙 <span id="ui-coins">3</span></div>
@@ -269,7 +369,7 @@
             <h2 style="color:#e74c3c;">פרישת שחקנים</h2>
             <p>מישהו רוצה לפרוש מהמשחק?</p>
             <div id="remove-player-list" class="remove-player-list"></div>
-            <button class="btn" onclick="closeRemoveModal()" style="background:#7f8c8d; padding: 5px 15px; font-size:1rem;">סגור חלון</button>
+            <button class="btn" onclick="closeRemoveModal()" style="background:#7f8c8d; padding: 5px 15px; font-size:1rem; box-shadow:none;">סגור חלון</button>
         </div>
     </div>
 
@@ -308,12 +408,30 @@
     <div id="game-over-modal" class="modal">
         <div class="modal-content" style="border-color:#f1c40f;">
             <h2 style="color:#f1c40f; font-size: clamp(2rem, 5vh, 3rem);">🏆 ניצחון! 🏆</h2>
-            <p id="winner-message" style="font-size:clamp(1.2rem, 3vh, 1.8rem); font-weight:900; color:#2f3542;"></p>
+            <p id="winner-message" style="font-size:clamp(1.2rem, 3vh, 1.8rem); font-weight:900;"></p>
             <button class="btn" onclick="goToMenu()" style="background:#f1c40f; color:#333;">תפריט ראשי</button>
         </div>
     </div>
 
     <script>
+        // ==========================================
+        // מילון מונחים לפי ערכות נושא (Themes)
+        // ==========================================
+        const themeDict = {
+            'theme-classic': { upName: 'סולם', downName: 'נחש', upEmoji: '🪜', downEmoji: '🐍', upColor: '#2ed573', downColor: '#ff4757' },
+            'theme-princess': { upName: 'מטה קסם', downName: 'גפן קוצנית', upEmoji: '🪄', downEmoji: '🥀', upColor: '#feca57', downColor: '#8e44ad' },
+            'theme-space': { upName: 'קרן לייזר', downName: 'חור שחור', upEmoji: '🛸', downEmoji: '🌌', upColor: '#0abde3', downColor: '#ee5253' },
+            'theme-jungle': { upName: 'גשר חבלים', downName: 'מפל מים', upEmoji: '🌉', downEmoji: '🌊', upColor: '#e58e26', downColor: '#0abde3' }
+        };
+
+        function applyTheme() {
+            const theme = document.getElementById('game-theme').value;
+            document.body.className = theme;
+            if(document.getElementById('board').innerHTML.includes('cell')) {
+                drawVisualConnections();
+            }
+        }
+
         // ==========================================
         // מערכת סאונד
         // ==========================================
@@ -339,10 +457,10 @@
         }
 
         // ==========================================
-        // הגדרות המשחק הכלליות
+        // הגדרות המשחק הכלליות - הוספתי המון סולמות ונחשים!
         // ==========================================
-        const ladders = { 4: 14, 9: 31, 20: 38, 28: 84, 40: 59, 51: 67, 63: 81, 71: 91 };
-        const snakes = { 17: 7, 54: 34, 62: 19, 64: 60, 87: 24, 93: 73, 95: 75, 99: 78 };
+        const ladders = { 2: 23, 8: 34, 15: 45, 20: 38, 28: 84, 36: 55, 40: 59, 51: 67, 63: 81, 71: 91, 80: 98 };
+        const snakes = { 17: 7, 26: 11, 48: 16, 54: 34, 62: 19, 64: 60, 74: 53, 87: 24, 89: 68, 93: 73, 95: 75, 99: 78 };
         const surpriseSquares = [12, 25, 45, 68, 88];
         const avatars = ['🐈','🦖','🦄','🤖','🐙','🦊','🐰','🐸'];
         const defaultColors = ['#ff4757', '#1e90ff', '#2ed573', '#ffa502'];
@@ -397,12 +515,10 @@
         }
 
         function goToMenu() {
-            // ניקוי המצב
             document.getElementById('game-screen').style.display = 'none';
             document.getElementById('game-over-modal').style.display = 'none';
             document.getElementById('setup-screen').style.display = 'block';
             clearInterval(timerInterval);
-            // מחיקת קונפטי אם יש
             document.querySelectorAll('.confetti').forEach(e => e.remove());
         }
 
@@ -441,7 +557,6 @@
             const removedName = players[idx].name;
             players.splice(idx, 1);
             
-            // עדכון התור הנוכחי כדי שלא נדלג או ניתקע
             if (turnIndex >= idx) turnIndex--;
             if (turnIndex < 0 || turnIndex >= players.length) turnIndex = 0;
 
@@ -456,7 +571,7 @@
         }
 
         // ==========================================
-        // יצירת הלוח (סולמות, נחשים)
+        // יצירת הלוח (סולמות, נחשים לפי נושא!)
         // ==========================================
         function createBoard() {
             const boardDiv = document.getElementById('board');
@@ -483,6 +598,7 @@
             if(!svg || !board) return;
             svg.innerHTML = '';
             const boardRect = board.getBoundingClientRect();
+            const theme = document.body.className || 'theme-classic';
 
             window.getCenterCoords = (num) => {
                 const cell = document.getElementById(`cell-${num}`);
@@ -491,26 +607,69 @@
                 return { x: rect.left - boardRect.left + rect.width / 2, y: rect.top - boardRect.top + rect.height / 2 };
             };
 
+            // ציור העליות (לשעבר רק סולמות)
             for (let [start, end] of Object.entries(ladders)) {
                 let p1 = window.getCenterCoords(start), p2 = window.getCenterCoords(end);
                 let dx = p2.x - p1.x, dy = p2.y - p1.y, length = Math.sqrt(dx*dx + dy*dy);
-                let nx = -dy / length * 10, ny = dx / length * 10;
-                svg.innerHTML += `<line x1="${p1.x + nx}" y1="${p1.y + ny}" x2="${p2.x + nx}" y2="${p2.y + ny}" stroke="#2ed573" stroke-width="6" opacity="0.8" stroke-linecap="round"/>`;
-                svg.innerHTML += `<line x1="${p1.x - nx}" y1="${p1.y - ny}" x2="${p2.x - nx}" y2="${p2.y - ny}" stroke="#2ed573" stroke-width="6" opacity="0.8" stroke-linecap="round"/>`;
-                let numSteps = Math.floor(length / 20);
-                for(let i=1; i<numSteps; i++) {
-                    let stepX = p1.x + dx * (i/numSteps), stepY = p1.y + dy * (i/numSteps);
-                    svg.innerHTML += `<line x1="${stepX + nx}" y1="${stepY + ny}" x2="${stepX - nx}" y2="${stepY - ny}" stroke="#2ed573" stroke-width="4" opacity="0.8"/>`;
+                
+                if (theme === 'theme-classic') {
+                    let nx = -dy / length * 10, ny = dx / length * 10;
+                    svg.innerHTML += `<line x1="${p1.x+nx}" y1="${p1.y+ny}" x2="${p2.x+nx}" y2="${p2.y+ny}" stroke="#2ed573" stroke-width="6" opacity="0.8" stroke-linecap="round"/>`;
+                    svg.innerHTML += `<line x1="${p1.x-nx}" y1="${p1.y-ny}" x2="${p2.x-nx}" y2="${p2.y-ny}" stroke="#2ed573" stroke-width="6" opacity="0.8" stroke-linecap="round"/>`;
+                    let numSteps = Math.floor(length / 20);
+                    for(let i=1; i<numSteps; i++) {
+                        let sx = p1.x + dx*(i/numSteps), sy = p1.y + dy*(i/numSteps);
+                        svg.innerHTML += `<line x1="${sx+nx}" y1="${sy+ny}" x2="${sx-nx}" y2="${sy-ny}" stroke="#2ed573" stroke-width="4" opacity="0.8"/>`;
+                    }
+                } else if (theme === 'theme-princess') {
+                    // מטה קסם
+                    svg.innerHTML += `<line x1="${p1.x}" y1="${p1.y}" x2="${p2.x}" y2="${p2.y}" stroke="#feca57" stroke-width="8" opacity="0.9" stroke-linecap="round"/>`;
+                    svg.innerHTML += `<line x1="${p1.x}" y1="${p1.y}" x2="${p2.x}" y2="${p2.y}" stroke="#fff" stroke-width="3" opacity="0.8"/>`;
+                    svg.innerHTML += `<text x="${p2.x}" y="${p2.y+8}" font-size="25" text-anchor="middle">⭐</text>`;
+                } else if (theme === 'theme-space') {
+                    // קרן לייזר
+                    svg.innerHTML += `<line x1="${p1.x}" y1="${p1.y}" x2="${p2.x}" y2="${p2.y}" stroke="#0abde3" stroke-width="12" opacity="0.6" stroke-linecap="round"/>`;
+                    svg.innerHTML += `<line x1="${p1.x}" y1="${p1.y}" x2="${p2.x}" y2="${p2.y}" stroke="#fff" stroke-width="4" stroke-dasharray="15 10"/>`;
+                    svg.innerHTML += `<text x="${p2.x}" y="${p2.y+8}" font-size="20" text-anchor="middle">🛸</text>`;
+                } else if (theme === 'theme-jungle') {
+                    // גשר חבלים / עץ
+                    let nx = -dy / length * 12, ny = dx / length * 12;
+                    svg.innerHTML += `<line x1="${p1.x+nx}" y1="${p1.y+ny}" x2="${p2.x+nx}" y2="${p2.y+ny}" stroke="#8B4513" stroke-width="6" opacity="0.9" stroke-linecap="round"/>`;
+                    svg.innerHTML += `<line x1="${p1.x-nx}" y1="${p1.y-ny}" x2="${p2.x-nx}" y2="${p2.y-ny}" stroke="#8B4513" stroke-width="6" opacity="0.9" stroke-linecap="round"/>`;
+                    let numSteps = Math.floor(length / 20);
+                    for(let i=1; i<numSteps; i++) {
+                        let sx = p1.x + dx*(i/numSteps), sy = p1.y + dy*(i/numSteps);
+                        svg.innerHTML += `<line x1="${sx+nx}" y1="${sy+ny}" x2="${sx-nx}" y2="${sy-ny}" stroke="#cd853f" stroke-width="5" opacity="1"/>`;
+                    }
                 }
             }
 
+            // ציור הירידות (לשעבר רק נחשים)
             for (let [start, end] of Object.entries(snakes)) {
                 let p1 = window.getCenterCoords(start), p2 = window.getCenterCoords(end);
                 let dx = p2.x - p1.x, dy = p2.y - p1.y, cx = p1.x + dx / 2 - dy * 0.3, cy = p1.y + dy / 2 + dx * 0.3;
-                svg.innerHTML += `<path d="M ${p1.x} ${p1.y} Q ${cx} ${cy} ${p2.x} ${p2.y}" fill="none" stroke="#ff4757" stroke-width="12" stroke-linecap="round" opacity="0.85"/>`;
-                svg.innerHTML += `<path d="M ${p1.x} ${p1.y} Q ${cx} ${cy} ${p2.x} ${p2.y}" fill="none" stroke="#ffeaa7" stroke-width="4" stroke-dasharray="8, 12" stroke-linecap="round" opacity="0.9"/>`;
-                svg.innerHTML += `<circle cx="${p1.x}" cy="${p1.y}" r="9" fill="#ff4757" stroke="#2f3542" stroke-width="2"/>`;
-                svg.innerHTML += `<circle cx="${p1.x - 3}" cy="${p1.y - 3}" r="2" fill="white"/><circle cx="${p1.x + 3}" cy="${p1.y - 3}" r="2" fill="white"/>`;
+                
+                if (theme === 'theme-classic') {
+                    svg.innerHTML += `<path d="M ${p1.x} ${p1.y} Q ${cx} ${cy} ${p2.x} ${p2.y}" fill="none" stroke="#ff4757" stroke-width="12" stroke-linecap="round" opacity="0.85"/>`;
+                    svg.innerHTML += `<path d="M ${p1.x} ${p1.y} Q ${cx} ${cy} ${p2.x} ${p2.y}" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="4" stroke-dasharray="8, 12" stroke-linecap="round" opacity="0.9"/>`;
+                    svg.innerHTML += `<circle cx="${p1.x}" cy="${p1.y}" r="9" fill="#ff4757" stroke="#2f3542" stroke-width="2"/>`;
+                    svg.innerHTML += `<circle cx="${p1.x-3}" cy="${p1.y-3}" r="2" fill="white"/><circle cx="${p1.x+3}" cy="${p1.y-3}" r="2" fill="white"/>`;
+                } else if (theme === 'theme-princess') {
+                    // גפן קוצנית
+                    svg.innerHTML += `<path d="M ${p1.x} ${p1.y} Q ${cx} ${cy} ${p2.x} ${p2.y}" fill="none" stroke="#27ae60" stroke-width="10" stroke-linecap="round" opacity="0.9"/>`;
+                    svg.innerHTML += `<path d="M ${p1.x} ${p1.y} Q ${cx} ${cy} ${p2.x} ${p2.y}" fill="none" stroke="#8e44ad" stroke-width="4" stroke-dasharray="5 15" opacity="1"/>`;
+                    svg.innerHTML += `<text x="${p1.x}" y="${p1.y+8}" font-size="25" text-anchor="middle">🥀</text>`;
+                } else if (theme === 'theme-space') {
+                    // חור שחור / זנב מטאור
+                    svg.innerHTML += `<path d="M ${p1.x} ${p1.y} Q ${cx} ${cy} ${p2.x} ${p2.y}" fill="none" stroke="#eb4d4b" stroke-width="14" stroke-linecap="round" opacity="0.7"/>`;
+                    svg.innerHTML += `<path d="M ${p1.x} ${p1.y} Q ${cx} ${cy} ${p2.x} ${p2.y}" fill="none" stroke="#f0932b" stroke-width="6" stroke-dasharray="20 10" stroke-linecap="round" opacity="0.9"/>`;
+                    svg.innerHTML += `<text x="${p2.x}" y="${p2.y+8}" font-size="25" text-anchor="middle">🌌</text>`;
+                } else if (theme === 'theme-jungle') {
+                    // מפל מים
+                    svg.innerHTML += `<path d="M ${p1.x} ${p1.y} Q ${cx} ${cy} ${p2.x} ${p2.y}" fill="none" stroke="#0984e3" stroke-width="14" stroke-linecap="round" opacity="0.8"/>`;
+                    svg.innerHTML += `<path d="M ${p1.x} ${p1.y} Q ${cx} ${cy} ${p2.x} ${p2.y}" fill="none" stroke="#74b9ff" stroke-width="4" stroke-dasharray="10 10" opacity="0.9"/>`;
+                    svg.innerHTML += `<text x="${p2.x}" y="${p2.y+8}" font-size="25" text-anchor="middle">🌊</text>`;
+                }
             }
         }
         
@@ -525,7 +684,7 @@
                     if (index === turnIndex) token.classList.add('active');
                     token.style.backgroundColor = player.color; token.title = player.name;
                     token.innerText = player.avatar;
-                    token.dataset.id = player.id; // שמירת מזהה לאנימציות
+                    token.dataset.id = player.id; 
                     container.appendChild(token);
                 }
             });
@@ -569,9 +728,10 @@
             diceNumberElem.innerText = finalRoll;
             
             await sleep(1200); diceOverlay.style.display = 'none';
-            document.getElementById('game-message').innerText = `${player.name} צועד/ת ${finalRoll} צעדים...`;
+            
+            const themeInfo = themeDict[document.body.className || 'theme-classic'];
+            document.getElementById('game-message').innerText = `${player.name} צועדת ${finalRoll} צעדים...`;
 
-            // הליכה צעד-צעד רגילה
             for (let i = 0; i < finalRoll; i++) {
                 if (player.pos >= 100) break;
                 player.pos++; playSound('step'); drawPlayers(); await sleep(300); 
@@ -583,6 +743,8 @@
         async function evaluateSquare(player) {
             if (player.pos === 100) { endGame(player); return; }
 
+            const themeInfo = themeDict[document.body.className || 'theme-classic'];
+
             if (surpriseSquares.includes(player.pos)) {
                 triggerSurprise(player);
             } else if (ladders[player.pos]) {
@@ -590,7 +752,7 @@
             } else if (snakes[player.pos]) {
                 if (player.immune) {
                     player.immune = false; playSound('magic');
-                    document.getElementById('game-message').innerText = "🛡️ מגן החסינות שמר עליך מהנחש!";
+                    document.getElementById('game-message').innerText = `🛡️ מגן החסינות שמר עליך מפני ${themeInfo.downName}!`;
                     nextTurn();
                 } else {
                     askMathQuestion(player, 'snake', snakes[player.pos]);
@@ -601,33 +763,39 @@
         }
 
         // ==========================================
-        // ★ חדש: תנועה ישירה ומציאותית על הנחש/סולם ★
+        // האנימציה ששומרת על הגודל המקורי
         // ==========================================
         async function animateDirectMove(player, target, type) {
             return new Promise(resolve => {
                 const board = document.getElementById('board');
                 const token = document.querySelector(`.player-token[data-id="${player.id}"]`);
                 if (!token || !window.getCenterCoords) {
-                    // גיבוי - אם משהו נכשל, זזים רגיל
                     player.pos = target; drawPlayers(); resolve(); return;
                 }
 
                 const p1 = window.getCenterCoords(player.pos);
                 const p2 = window.getCenterCoords(target);
 
-                // יצירת עותק שמרחף מעל הלוח
+                const tokenRect = token.getBoundingClientRect();
+                const computedStyle = window.getComputedStyle(token);
+
                 const animToken = token.cloneNode(true);
                 animToken.style.position = 'absolute';
                 animToken.style.margin = '0';
-                animToken.style.zIndex = '100';
+                animToken.style.zIndex = '1000';
+                
+                animToken.style.width = tokenRect.width + 'px';
+                animToken.style.height = tokenRect.height + 'px';
+                animToken.style.fontSize = computedStyle.fontSize;
+                animToken.style.boxShadow = computedStyle.boxShadow;
+                
                 board.appendChild(animToken);
-                token.style.display = 'none'; // הסתרת המקורי
+                token.style.display = 'none';
 
-                const duration = 1500; // שנייה וחצי של אנימציה
+                const duration = 1500; 
                 const startTime = performance.now();
                 playSound(type === 'ladder' ? 'slideUp' : 'slideDown');
 
-                // נקודות לשליטה על עיקול הנחש
                 let cx, cy;
                 if (type === 'snake') {
                     const dx = p2.x - p1.x; const dy = p2.y - p1.y;
@@ -640,17 +808,14 @@
 
                     let currentX, currentY;
                     if (type === 'ladder') {
-                        // תנועה בקו ישר
                         currentX = p1.x + (p2.x - p1.x) * progress;
                         currentY = p1.y + (p2.y - p1.y) * progress;
-                        animToken.style.transform = `translate(-50%, -50%) scale(1.5)`;
+                        animToken.style.transform = `translate(-50%, -50%)`;
                     } else {
-                        // תנועה גלית (בזייר) בדיוק על גוף הנחש
                         const inv = 1 - progress;
                         currentX = inv * inv * p1.x + 2 * inv * progress * cx + progress * progress * p2.x;
                         currentY = inv * inv * p1.y + 2 * inv * progress * cy + progress * progress * p2.y;
-                        // התנדנדות קלה בזמן ההחלקה בנחש
-                        animToken.style.transform = `translate(-50%, -50%) scale(1.5) rotate(${Math.sin(progress * 20) * 15}deg)`;
+                        animToken.style.transform = `translate(-50%, -50%) rotate(${Math.sin(progress * 20) * 15}deg)`;
                     }
 
                     animToken.style.left = currentX + 'px';
@@ -675,10 +840,10 @@
         function triggerSurprise(player) {
             playSound('magic');
             const surprises = [
-                { msg: "מצאת אוצר! קבל/י מטבע 1 🪙", action: () => player.coins++ },
+                { msg: "מצאת אוצר! קיבלת מטבע 1 🪙", action: () => player.coins++ },
                 { msg: "קיצור דרך סודי! קדימה 3 צעדים 🚀", action: async () => { await walkPlayer(player, Math.min(100, player.pos+3)); evaluateSquare(player); } },
                 { msg: "אוי, קליפת בננה... אחורה 2 צעדים 🍌", action: async () => { await walkPlayer(player, Math.max(1, player.pos-2)); evaluateSquare(player); } },
-                { msg: "מגן חסינות! הנחש הבא לא יכיש אותך 🛡️", action: () => player.immune = true }
+                { msg: "מגן חסינות קסום! הירידה הבאה מבוטלת 🛡️", action: () => player.immune = true }
             ];
             
             const choice = surprises[Math.floor(Math.random() * surprises.length)];
@@ -698,7 +863,6 @@
             } else { nextTurn(); }
         }
 
-        // פונקציית הליכה צעד-צעד להפתעות
         async function walkPlayer(player, target) {
             let step = player.pos < target ? 1 : -1;
             while(player.pos !== target) {
@@ -707,7 +871,7 @@
         }
 
         // ==========================================
-        // מערכת האתגר (חידות)
+        // מערכת האתגר (חידות) מותאמת לנושא
         // ==========================================
         function generateQuestion() {
             let n1, n2;
@@ -722,14 +886,21 @@
             currentChallengeData = { player, type, target, correct: q.correct };
 
             const isLadder = type === 'ladder';
-            document.getElementById('challenge-title').innerText = isLadder ? '🪜 טיפוס סולם!' : '🐍 סכנת נחש!';
-            document.getElementById('modal-content-box').style.borderColor = isLadder ? '#2ed573' : '#ff4757';
-            document.getElementById('challenge-title').style.color = isLadder ? '#2ed573' : '#ff4757';
+            const themeName = document.body.className || 'theme-classic';
+            const themeInfo = themeDict[themeName];
+
+            const objName = isLadder ? themeInfo.upName : themeInfo.downName;
+            const objEmoji = isLadder ? themeInfo.upEmoji : themeInfo.downEmoji;
+            const objColor = isLadder ? themeInfo.upColor : themeInfo.downColor;
+
+            document.getElementById('challenge-title').innerText = `${objEmoji} אתגר ה${objName}!`;
+            document.getElementById('modal-content-box').style.borderColor = objColor;
+            document.getElementById('challenge-title').style.color = objColor;
             
             let diffTxt = difficulty==='hard' && isLadder ? ' (טעות = ירידה 2 צעדים!)' : '';
             document.getElementById('challenge-desc').innerText = (isLadder ? 'פתרון נכון יוביל למעלה!' : 'פתרון נכון יציל אותך!') + diffTxt;
             
-            document.getElementById('dice-visuals').innerHTML = `<span style="color:#1e90ff">${q.n1}</span> ✖ <span style="color:#ffa502">${q.n2}</span>`;
+            document.getElementById('dice-visuals').innerHTML = `<span style="color:var(--cell-c2)">${q.n1}</span> ✖ <span style="color:var(--cell-c4)">${q.n2}</span>`;
             document.getElementById('math-question').innerText = `${q.n1} × ${q.n2} = ?`;
             document.getElementById('answer-input').value = '';
             document.getElementById('hint-display').innerText = '';
@@ -788,28 +959,28 @@
             const data = currentChallengeData;
             document.getElementById('challenge-modal').style.display = 'none';
 
+            const themeInfo = themeDict[document.body.className || 'theme-classic'];
+
             if (ans === data.correct) {
                 playSound('correct');
                 if (data.type === 'ladder') {
-                    document.getElementById('game-message').innerText = "מעולה! מטפסים למעלה! 🪜";
-                    // ★ שימוש באנימציה החדשה ★
+                    document.getElementById('game-message').innerText = `אלופה! עולים על ה${themeInfo.upName}! ${themeInfo.upEmoji}`;
                     await animateDirectMove(data.player, data.target, 'ladder');
                 } else {
-                    document.getElementById('game-message').innerText = "כל הכבוד! נשארים במקום! 🎉";
+                    document.getElementById('game-message').innerText = `מהממת! ניצלת מה${themeInfo.downName}! 🎉`;
                 }
             } else {
                 playSound('wrong');
                 let reason = isTimeout ? "נגמר הזמן!" : `טעות (התשובה ${data.correct}).`;
                 if (data.type === 'ladder') {
                     if (difficulty === 'hard') {
-                        document.getElementById('game-message').innerText = `${reason} עונש: יורדים 2 צעדים!`;
+                        document.getElementById('game-message').innerText = `${reason} עונש: יורדות 2 צעדים!`;
                         await walkPlayer(data.player, Math.max(1, data.player.pos - 2));
                     } else {
-                        document.getElementById('game-message').innerText = `${reason} נשארים למטה.`;
+                        document.getElementById('game-message').innerText = `${reason} נשארות למטה.`;
                     }
                 } else {
-                    document.getElementById('game-message').innerText = `${reason} מחליקים למטה... 🐍`;
-                    // ★ שימוש באנימציה החדשה ★
+                    document.getElementById('game-message').innerText = `${reason} אופס, נופלות... ${themeInfo.downEmoji}`;
                     await animateDirectMove(data.player, data.target, 'snake');
                 }
             }
@@ -826,9 +997,6 @@
             isMoving = false; 
         }
 
-        // ==========================================
-        // סיום וקונפטי
-        // ==========================================
         function createConfetti() {
             const colors = ['#ff4757', '#1dd1a1', '#f1c40f', '#3498db', '#9b59b6'];
             for(let i=0; i<80; i++) {
@@ -841,7 +1009,7 @@
 
         function endGame(winner) {
             playSound('win'); createConfetti();
-            document.getElementById('winner-message').innerText = `כל הכבוד ${winner.name}! ${winner.avatar}`;
+            document.getElementById('winner-message').innerText = `כל הכבוד ${winner.name}! מנצחת אמיתית! ${winner.avatar}`;
             document.getElementById('game-message').innerText = "המשחק הסתיים.";
             setTimeout(() => { document.getElementById('game-over-modal').style.display = 'flex'; }, 1000);
         }
